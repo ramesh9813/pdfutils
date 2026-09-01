@@ -49,7 +49,7 @@ export const RangeSliceConfig: React.FC<RangeSliceConfigProps> = ({
         value={customRanges}
         onChange={(e) => onSetCustomRanges(e.target.value)}
         disabled={disabled}
-        placeholder="1:5, 6:9, 10:50"
+        placeholder={`0 or empty for all pages (1:${totalPages})`}
         className={`w-full rounded border px-3 py-2 text-xs font-mono bg-bg-surface text-text-main outline-none focus:border-primary ${
           !rangeValidation.valid ? 'border-danger' : 'border-border'
         }`}
@@ -59,12 +59,20 @@ export const RangeSliceConfig: React.FC<RangeSliceConfigProps> = ({
         <p className="text-[11px] text-danger">{rangeValidation.error}</p>
       ) : (
         <p className="text-[11px] text-text-muted">
-          Format: <code className="bg-bg-subtle px-1 py-0.5 rounded text-primary font-semibold">1:5, 6:9</code> (start:end)
+          <strong className="text-text-main">0 or empty</strong> means all pages (1 to {totalPages}). Slices: <code className="bg-bg-subtle px-1 py-0.5 rounded text-primary font-semibold">1:5, 6:9</code>
         </p>
       )}
 
       {/* Quick helper buttons */}
       <div className="flex flex-wrap gap-1.5 pt-0.5">
+        <button
+          type="button"
+          onClick={() => onSetCustomRanges('0')}
+          disabled={disabled}
+          className="px-2 py-0.5 rounded border border-border bg-bg-surface hover:border-primary/50 text-text-sub text-[11px] font-mono"
+        >
+          All (0)
+        </button>
         <button
           type="button"
           onClick={() => onSetCustomRanges(`1:${Math.ceil(totalPages / 2)}, ${Math.ceil(totalPages / 2) + 1}:${totalPages}`)}

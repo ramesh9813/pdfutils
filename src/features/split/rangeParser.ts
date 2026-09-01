@@ -41,8 +41,11 @@ export function parseRangeString(
   maxPages: number
 ): { valid: boolean; ranges: SplitRange[]; error?: string } {
   const trimmed = rangeStr.trim();
-  if (!trimmed) {
-    return { valid: false, ranges: [], error: 'Range string cannot be empty.' };
+  if (!trimmed || trimmed === '0') {
+    return {
+      valid: true,
+      ranges: maxPages > 0 ? [{ start: 1, end: maxPages }] : [{ start: 1, end: 1 }],
+    };
   }
 
   const parts = trimmed.split(',');
@@ -97,7 +100,10 @@ export function parseRangeString(
       if (isNaN(page)) {
         return { valid: false, ranges: [], error: `Invalid page number: "${segment}"` };
       }
-      if (page === 0) page = 1;
+      if (page === 0) {
+        ranges.push({ start: 1, end: maxPages });
+        continue;
+      }
       if (page < 1) {
         return { valid: false, ranges: [], error: 'Page number must be 1 or greater.' };
       }

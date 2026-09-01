@@ -49,6 +49,7 @@ export const SplitPdfPage: React.FC = () => {
   } = usePdfSplit(docInfo ? docInfo.name : 'document');
 
   const configPanelRef = useRef<HTMLDivElement>(null);
+  const initialDocRef = useRef<string | null>(null);
 
   // Pick up shared file from utils top card if available
   useEffect(() => {
@@ -58,13 +59,14 @@ export const SplitPdfPage: React.FC = () => {
   }, [sharedFile, docInfo, loadFile]);
 
   useEffect(() => {
-    if (docInfo) {
+    if (docInfo && initialDocRef.current !== docInfo.name) {
+      initialDocRef.current = docInfo.name;
       setFilenamePrefix(docInfo.name.replace(/\.pdf$/i, ''));
-      if (options.splitPoints.length === 0 && (!options.customRanges || options.customRanges === '1:1')) {
+      if (options.splitPoints.length === 0) {
         setCustomRanges(`1:${docInfo.pageCount}`, docInfo.pageCount);
       }
     }
-  }, [docInfo, setFilenamePrefix, setCustomRanges, options.splitPoints.length, options.customRanges]);
+  }, [docInfo, setFilenamePrefix, setCustomRanges, options.splitPoints.length]);
 
   const handleFilesSelected = (files: File[]) => {
     if (files.length > 0) {
@@ -77,10 +79,8 @@ export const SplitPdfPage: React.FC = () => {
     if (!docInfo) return;
     const freshBuf = getFreshBuffer();
     const pageOrderMapping = pages.map((p) => p.originalPageIndex);
-    const pageRotations: { [originalIndex: number]: number } = {};
-    pages.forEach((p) => {
-      if (p.rotation) pageRotations[p.originalPageIndex] = p.rotation;
-    });
+    const pageRotations: { [idx: number]: number } = {};
+    pages.forEach((p) => { if (p.rotation) pageRotations[p.originalPageIndex] = p.rotation; });
     executeSplit(freshBuf, docInfo.pageCount, pageOrderMapping, pageRotations);
   };
 
