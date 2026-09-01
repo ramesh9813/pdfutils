@@ -144,7 +144,7 @@ export const PagePreviewGrid: React.FC<PagePreviewGridProps> = ({
 
       {/* Full Page Preview Modal */}
       <PagePreviewModal
-        page={previewModalPage}
+        page={previewModalPage ? (pages.find((p) => p.pageNumber === previewModalPage.pageNumber) ?? previewModalPage) : null}
         onClose={() => setPreviewModalPage(null)}
         onRotate={onRotatePage}
       />

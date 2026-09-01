@@ -162,7 +162,7 @@ export const PageThumbnailCard: React.FC<PageThumbnailCardProps> = ({
           <img
             src={page.thumbnailUrl}
             alt={`Page ${page.pageNumber}`}
-            className="h-full w-full object-contain pointer-events-none transition-transform"
+            className="h-full w-full object-contain pointer-events-none transition-transform duration-200 ease-in-out"
             style={{ transform: `rotate(${page.rotation}deg)` }}
           />
         ) : (

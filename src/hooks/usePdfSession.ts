@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef } from 'react';
 import type { PdfDocumentInfo, PdfPageDetail } from '../types/pdf.types';
-import { extractDocumentWithThumbnails, renderPageThumbnail } from '../services/pdfRenderer';
+import { extractDocumentWithThumbnails } from '../services/pdfRenderer';
 
 export function usePdfSession() {
   const [docInfo, setDocInfo] = useState<PdfDocumentInfo | null>(null);
@@ -99,40 +99,17 @@ export function usePdfSession() {
     setError(null);
   }, []);
 
-  const rotatePage = useCallback(async (pageNumber: number) => {
-    if (!masterBytesRef.current) return;
-
+  const rotatePage = useCallback((pageNumber: number) => {
     setPages((prev) =>
       prev.map((p) => {
         if (p.pageNumber === pageNumber) {
-          const newRot = (p.rotation + 90) % 360;
-          return { ...p, rotation: newRot, isLoadingThumbnail: true };
+          const newRot = ((p.rotation || 0) + 90) % 360;
+          return { ...p, rotation: newRot };
         }
         return p;
       })
     );
-
-    try {
-      const page = pages.find((p) => p.pageNumber === pageNumber);
-      const newRot = page ? (page.rotation + 90) % 360 : 90;
-      const thumbUrl = await renderPageThumbnail(
-        masterBytesRef.current,
-        pageNumber,
-        280,
-        newRot
-      );
-
-      setPages((prev) =>
-        prev.map((p) =>
-          p.pageNumber === pageNumber
-            ? { ...p, thumbnailUrl: thumbUrl, isLoadingThumbnail: false }
-            : p
-        )
-      );
-    } catch (err) {
-      console.error('Error re-rendering rotated page:', err);
-    }
-  }, [pages]);
+  }, []);
 
   const reorderPages = useCallback((fromIndex: number, toIndex: number) => {
     setPages((prev) => {
