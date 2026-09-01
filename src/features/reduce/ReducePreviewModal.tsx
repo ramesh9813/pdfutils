@@ -92,6 +92,11 @@ export const ReducePreviewModal: React.FC<ReducePreviewModalProps> = ({
                 Boost +{visuals.colorBoostPercent}%
               </span>
             )}
+            {visuals.textWeightPercent > 0 && (
+              <span className="text-[10px] bg-slate-100 text-slate-800 border border-slate-300 px-1.5 py-0.5 rounded font-mono font-semibold">
+                Weight +{visuals.textWeightPercent}%
+              </span>
+            )}
           </div>
         </div>
 

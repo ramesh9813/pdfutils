@@ -25,7 +25,8 @@ export const ExpandablePreviewCard: React.FC<ExpandablePreviewCardProps> = ({
     visuals.contrastPercent !== 100 ||
     visuals.saturationPercent !== 100 ||
     visuals.sharpnessPercent > 0 ||
-    visuals.colorBoostPercent > 0;
+    visuals.colorBoostPercent > 0 ||
+    visuals.textWeightPercent > 0;
 
   return (
     <Card className="flex flex-col gap-3 p-4 border border-border bg-bg-surface shadow-2xs">
@@ -113,6 +114,11 @@ export const ExpandablePreviewCard: React.FC<ExpandablePreviewCardProps> = ({
             {visuals.colorBoostPercent > 0 && (
               <span className="text-[10px] font-mono px-1.5 py-0.5 bg-purple-50 text-purple-800 rounded border border-purple-200">
                 Boost: <strong>+{visuals.colorBoostPercent}%</strong>
+              </span>
+            )}
+            {visuals.textWeightPercent > 0 && (
+              <span className="text-[10px] font-mono px-1.5 py-0.5 bg-slate-100 text-slate-800 rounded border border-slate-300">
+                Weight: <strong>+{visuals.textWeightPercent}%</strong>
               </span>
             )}
             <span className="text-[10px] font-mono px-1.5 py-0.5 bg-bg-subtle rounded border border-border text-text-sub">

@@ -85,3 +85,54 @@ export function applyEdgeSharpen(
     }
   }
 }
+
+/**
+ * Morphological dark dilation: detects dark text character strokes and lines,
+ * and expands their physical width/weight into adjacent pixels.
+ */
+export function applyTextWeightDilation(
+  srcData: Uint8ClampedArray,
+  dstData: Uint8ClampedArray,
+  width: number,
+  height: number,
+  textWeightPercent: number
+): void {
+  if (textWeightPercent <= 0) return;
+  const strength = (textWeightPercent / 100) * 0.9;
+  const darkThreshold = 150;
+
+  for (let y = 1; y < height - 1; y++) {
+    const rowOffset = y * width * 4;
+    const prevRowOffset = (y - 1) * width * 4;
+    const nextRowOffset = (y + 1) * width * 4;
+
+    for (let x = 1; x < width - 1; x++) {
+      const idx = rowOffset + x * 4;
+      const r = srcData[idx];
+      const g = srcData[idx + 1];
+      const b = srcData[idx + 2];
+      const lum = 0.299 * r + 0.587 * g + 0.114 * b;
+
+      const topIdx = prevRowOffset + x * 4;
+      const botIdx = nextRowOffset + x * 4;
+      const leftIdx = idx - 4;
+      const rightIdx = idx + 4;
+
+      const lumTop = 0.299 * srcData[topIdx] + 0.587 * srcData[topIdx + 1] + 0.114 * srcData[topIdx + 2];
+      const lumBot = 0.299 * srcData[botIdx] + 0.587 * srcData[botIdx + 1] + 0.114 * srcData[botIdx + 2];
+      const lumLeft = 0.299 * srcData[leftIdx] + 0.587 * srcData[leftIdx + 1] + 0.114 * srcData[leftIdx + 2];
+      const lumRight = 0.299 * srcData[rightIdx] + 0.587 * srcData[rightIdx + 1] + 0.114 * srcData[rightIdx + 2];
+
+      const minNeighborLum = Math.min(lumTop, lumBot, lumLeft, lumRight);
+
+      // If an adjacent neighbor is dark text/stroke, expand darkness into current pixel
+      if (minNeighborLum < darkThreshold && minNeighborLum < lum) {
+        const darkDiff = lum - minNeighborLum;
+        const blend = strength * (darkDiff / 255);
+        dstData[idx] = Math.max(0, r * (1 - blend) + minNeighborLum * blend);
+        dstData[idx + 1] = Math.max(0, g * (1 - blend) + minNeighborLum * blend);
+        dstData[idx + 2] = Math.max(0, b * (1 - blend) + minNeighborLum * blend);
+      }
+    }
+  }
+}

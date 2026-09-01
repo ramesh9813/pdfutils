@@ -15,6 +15,7 @@ const defaultVisuals: ColorAdjustmentOptions = {
   saturationPercent: 100,
   sharpnessPercent: 0,
   colorBoostPercent: 0,
+  textWeightPercent: 0,
 };
 
 export function usePdfReduce(initialFileSize: number = 0) {

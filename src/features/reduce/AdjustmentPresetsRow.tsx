@@ -19,7 +19,8 @@ export const AdjustmentPresetsRow: React.FC<AdjustmentPresetsRowProps> = ({
     visuals.contrastPercent !== 100 ||
     visuals.saturationPercent !== 100 ||
     visuals.sharpnessPercent > 0 ||
-    visuals.colorBoostPercent > 0;
+    visuals.colorBoostPercent > 0 ||
+    visuals.textWeightPercent > 0;
 
   return (
     <div className="flex items-center gap-1.5 flex-wrap">
@@ -34,6 +35,7 @@ export const AdjustmentPresetsRow: React.FC<AdjustmentPresetsRowProps> = ({
             saturationPercent: 0,
             sharpnessPercent: 40,
             colorBoostPercent: 30,
+            textWeightPercent: 40,
           })
         }
         className={`px-2 py-1 rounded text-[11px] font-semibold transition-all border ${
@@ -57,6 +59,7 @@ export const AdjustmentPresetsRow: React.FC<AdjustmentPresetsRowProps> = ({
             saturationPercent: 130,
             sharpnessPercent: 30,
             colorBoostPercent: 60,
+            textWeightPercent: 25,
           })
         }
         className={`px-2 py-1 rounded text-[11px] font-semibold transition-all border ${
@@ -81,6 +84,7 @@ export const AdjustmentPresetsRow: React.FC<AdjustmentPresetsRowProps> = ({
               saturationPercent: 100,
               sharpnessPercent: 0,
               colorBoostPercent: 0,
+              textWeightPercent: 0,
             })
           }
           className="px-2 py-1 rounded text-[11px] font-semibold text-rose-600 hover:bg-rose-50 border border-rose-200 transition-all flex items-center gap-1"

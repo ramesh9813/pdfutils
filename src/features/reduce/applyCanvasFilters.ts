@@ -1,8 +1,12 @@
 import type { ColorAdjustmentOptions } from './reduceTypes';
-import { applyColorAndToneBoost, applyEdgeSharpen } from './canvasPixelFilters';
+import {
+  applyColorAndToneBoost,
+  applyEdgeSharpen,
+  applyTextWeightDilation,
+} from './canvasPixelFilters';
 
 /**
- * Applies visual filters (grayscale, brightness, contrast, saturation, sharpness, and color/tone boost)
+ * Applies visual filters (grayscale, brightness, contrast, saturation, sharpness, color boost, and text weight)
  * to a rendered PDF page canvas prior to JPEG compression.
  */
 export function applyCanvasFilters(
@@ -16,6 +20,7 @@ export function applyCanvasFilters(
     saturationPercent = 100,
     sharpnessPercent = 0,
     colorBoostPercent = 0,
+    textWeightPercent = 0,
   } = options;
 
   if (
@@ -24,7 +29,8 @@ export function applyCanvasFilters(
     contrastPercent === 100 &&
     saturationPercent === 100 &&
     sharpnessPercent === 0 &&
-    colorBoostPercent === 0
+    colorBoostPercent === 0 &&
+    textWeightPercent === 0
   ) {
     return sourceCanvas;
   }
@@ -44,8 +50,8 @@ export function applyCanvasFilters(
   ctx.drawImage(sourceCanvas, 0, 0);
   ctx.filter = 'none';
 
-  // 2. Apply pixel-level enhancements (deep color boost & edge sharpening)
-  if (sharpnessPercent > 0 || colorBoostPercent > 0) {
+  // 2. Apply pixel-level enhancements (deep color boost, edge sharpening, text weight dilation)
+  if (sharpnessPercent > 0 || colorBoostPercent > 0 || textWeightPercent > 0) {
     const imgData = ctx.getImageData(0, 0, filteredCanvas.width, filteredCanvas.height);
 
     if (colorBoostPercent > 0) {
@@ -55,6 +61,11 @@ export function applyCanvasFilters(
     if (sharpnessPercent > 0) {
       const srcCopy = new Uint8ClampedArray(imgData.data);
       applyEdgeSharpen(srcCopy, imgData.data, filteredCanvas.width, filteredCanvas.height, sharpnessPercent);
+    }
+
+    if (textWeightPercent > 0) {
+      const srcCopy = new Uint8ClampedArray(imgData.data);
+      applyTextWeightDilation(srcCopy, imgData.data, filteredCanvas.width, filteredCanvas.height, textWeightPercent);
     }
 
     ctx.putImageData(imgData, 0, 0);

@@ -3,7 +3,7 @@ import type { ColorAdjustmentOptions } from './reduceTypes';
 import { Card } from '../../components/common/Card';
 import { RangeSliderItem } from './RangeSliderItem';
 import { AdjustmentPresetsRow } from './AdjustmentPresetsRow';
-import { Sliders, Sun, Contrast, Droplet, Palette, Zap, Sparkles } from 'lucide-react';
+import { Sliders, Sun, Contrast, Droplet, Palette, Zap, Sparkles, Bold } from 'lucide-react';
 
 export interface ColorAdjustmentSlidersProps {
   visuals: ColorAdjustmentOptions;
@@ -91,6 +91,21 @@ export const ColorAdjustmentSliders: React.FC<ColorAdjustmentSlidersProps> = ({
           rightHint="Max (100%)"
           disabled={disabled}
           onChange={(v) => onUpdateVisual('colorBoostPercent', v)}
+        />
+
+        <RangeSliderItem
+          label="Text Boldness & Stroke Width"
+          icon={<Bold className="h-3.5 w-3.5 text-slate-800" />}
+          value={visuals.textWeightPercent}
+          valueDisplay={visuals.textWeightPercent === 0 ? 'Normal' : `+${visuals.textWeightPercent}%`}
+          min={0}
+          max={100}
+          step={5}
+          leftHint="Original (0%)"
+          centerHint="Medium (50%)"
+          rightHint="Thick (100%)"
+          disabled={disabled}
+          onChange={(v) => onUpdateVisual('textWeightPercent', v)}
         />
 
         <RangeSliderItem

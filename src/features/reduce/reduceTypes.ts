@@ -5,6 +5,7 @@ export interface ColorAdjustmentOptions {
   saturationPercent: number; // 0 to 200 (100 = normal)
   sharpnessPercent: number; // 0 to 100 (0 = normal, 100 = crisp text/edges)
   colorBoostPercent: number; // 0 to 100 (0 = normal, 100 = deepens greens, reds, and darks)
+  textWeightPercent: number; // 0 to 100 (0 = normal, 100 = boldens/widens text characters and dark lines)
 }
 
 export interface ReduceOptions extends ColorAdjustmentOptions {
