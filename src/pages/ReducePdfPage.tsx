@@ -21,10 +21,7 @@ export const ReducePdfPage: React.FC = () => {
   const {
     qualityPercent,
     targetMb,
-    grayscalePercent,
-    brightnessPercent,
-    contrastPercent,
-    saturationPercent,
+    visuals,
     progress,
     result,
     isProcessing,
@@ -32,10 +29,7 @@ export const ReducePdfPage: React.FC = () => {
     isSettingsAltered,
     setQualityPercent,
     setTargetMb,
-    setGrayscalePercent,
-    setBrightnessPercent,
-    setContrastPercent,
-    setSaturationPercent,
+    updateVisual,
     updateColorFilters,
     resetTargetSize,
     executeReduce,
@@ -84,7 +78,7 @@ export const ReducePdfPage: React.FC = () => {
             Reduce PDF Size & Enhance
           </h1>
           <p className="text-xs text-text-sub mt-0.5">
-            Compress MB size, convert to black & white, or tune brightness & contrast.
+            Compress MB size, convert to B&W, sharpen text, or boost colors.
           </p>
         </div>
 
@@ -134,10 +128,12 @@ export const ReducePdfPage: React.FC = () => {
           {/* Real-time Filter Preview */}
           <LiveFilterPreview
             thumbnailUrl={firstPageThumb}
-            grayscalePercent={grayscalePercent}
-            brightnessPercent={brightnessPercent}
-            contrastPercent={contrastPercent}
-            saturationPercent={saturationPercent}
+            grayscalePercent={visuals.grayscalePercent}
+            brightnessPercent={visuals.brightnessPercent}
+            contrastPercent={visuals.contrastPercent}
+            saturationPercent={visuals.saturationPercent}
+            sharpnessPercent={visuals.sharpnessPercent}
+            colorBoostPercent={visuals.colorBoostPercent}
           />
 
           {/* Size & Quality Sliders */}
@@ -152,15 +148,9 @@ export const ReducePdfPage: React.FC = () => {
 
           {/* Visual & Color Adjustment Sliders */}
           <ColorAdjustmentSliders
-            grayscalePercent={grayscalePercent}
-            brightnessPercent={brightnessPercent}
-            contrastPercent={contrastPercent}
-            saturationPercent={saturationPercent}
+            visuals={visuals}
             disabled={isProcessing}
-            onGrayscaleChange={setGrayscalePercent}
-            onBrightnessChange={setBrightnessPercent}
-            onContrastChange={setContrastPercent}
-            onSaturationChange={setSaturationPercent}
+            onUpdateVisual={updateVisual}
             onApplyPreset={updateColorFilters}
           />
 
@@ -180,7 +170,7 @@ export const ReducePdfPage: React.FC = () => {
             isSettingsAltered={isSettingsAltered}
             qualityPercent={qualityPercent}
             targetMb={targetMb}
-            grayscalePercent={grayscalePercent}
+            grayscalePercent={visuals.grayscalePercent}
             isProcessing={isProcessing}
             progress={progress}
             disabled={isProcessing || !fileBuffer}

@@ -7,6 +7,8 @@ export interface LiveFilterPreviewProps {
   brightnessPercent: number;
   contrastPercent: number;
   saturationPercent: number;
+  sharpnessPercent: number;
+  colorBoostPercent: number;
 }
 
 export const LiveFilterPreview: React.FC<LiveFilterPreviewProps> = ({
@@ -15,13 +17,18 @@ export const LiveFilterPreview: React.FC<LiveFilterPreviewProps> = ({
   brightnessPercent,
   contrastPercent,
   saturationPercent,
+  sharpnessPercent,
+  colorBoostPercent,
 }) => {
-  const filterStyle = `grayscale(${grayscalePercent}%) brightness(${brightnessPercent}%) contrast(${contrastPercent}%) saturate(${saturationPercent}%)`;
+  const boostFactor = 1 + (colorBoostPercent / 100) * 0.35;
+  const filterStyle = `grayscale(${grayscalePercent}%) brightness(${brightnessPercent}%) contrast(${contrastPercent * boostFactor}%) saturate(${saturationPercent * boostFactor}%)`;
   const isAdjusted =
     grayscalePercent > 0 ||
     brightnessPercent !== 100 ||
     contrastPercent !== 100 ||
-    saturationPercent !== 100;
+    saturationPercent !== 100 ||
+    sharpnessPercent > 0 ||
+    colorBoostPercent > 0;
 
   return (
     <div className="flex flex-col sm:flex-row items-center gap-4 rounded-lg border border-border bg-bg-surface p-3 shadow-2xs">
@@ -53,12 +60,22 @@ export const LiveFilterPreview: React.FC<LiveFilterPreviewProps> = ({
           )}
         </div>
         <p className="text-[11px] text-text-muted">
-          Real-time preview of page 1 with active black & white, brightness, contrast, and saturation filters.
+          Real-time preview of page 1 with active black & white, sharpness, brightness, contrast, and color vibrance.
         </p>
         <div className="flex flex-wrap gap-1 mt-1 justify-center sm:justify-start">
           <span className="text-[10px] font-mono px-1.5 py-0.5 bg-bg-subtle rounded border border-border text-text-sub">
             B&W: <strong>{grayscalePercent}%</strong>
           </span>
+          {sharpnessPercent > 0 && (
+            <span className="text-[10px] font-mono px-1.5 py-0.5 bg-sky-50 text-sky-800 rounded border border-sky-200">
+              Sharp: <strong>+{sharpnessPercent}%</strong>
+            </span>
+          )}
+          {colorBoostPercent > 0 && (
+            <span className="text-[10px] font-mono px-1.5 py-0.5 bg-purple-50 text-purple-800 rounded border border-purple-200">
+              Boost: <strong>+{colorBoostPercent}%</strong>
+            </span>
+          )}
           <span className="text-[10px] font-mono px-1.5 py-0.5 bg-bg-subtle rounded border border-border text-text-sub">
             Bright: <strong>{brightnessPercent}%</strong>
           </span>

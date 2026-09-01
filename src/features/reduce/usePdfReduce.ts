@@ -1,7 +1,21 @@
 import { useState, useCallback, useMemo } from 'react';
 import saveAs from 'file-saver';
 import type { ProgressState } from '../../types/pdf.types';
-import { reducePdfSize, type ReduceResult, type ReduceOptions } from './reduceEngine';
+import {
+  reducePdfSize,
+  type ReduceResult,
+  type ReduceOptions,
+  type ColorAdjustmentOptions,
+} from './reduceEngine';
+
+const defaultVisuals: ColorAdjustmentOptions = {
+  grayscalePercent: 0,
+  brightnessPercent: 100,
+  contrastPercent: 100,
+  saturationPercent: 100,
+  sharpnessPercent: 0,
+  colorBoostPercent: 0,
+};
 
 export function usePdfReduce(initialFileSize: number = 0) {
   const initialMb = Math.max(0.1, Math.round((initialFileSize / (1024 * 1024)) * 100) / 100);
@@ -10,10 +24,8 @@ export function usePdfReduce(initialFileSize: number = 0) {
   const [targetMb, setTargetMb] = useState<number>(
     Math.max(0.05, Math.round(initialMb * 0.65 * 100) / 100)
   );
-  const [grayscalePercent, setGrayscalePercent] = useState<number>(0);
-  const [brightnessPercent, setBrightnessPercent] = useState<number>(100);
-  const [contrastPercent, setContrastPercent] = useState<number>(100);
-  const [saturationPercent, setSaturationPercent] = useState<number>(100);
+
+  const [visuals, setVisuals] = useState<ColorAdjustmentOptions>(defaultVisuals);
 
   const [progress, setProgress] = useState<ProgressState>({
     status: 'idle',
@@ -26,38 +38,27 @@ export function usePdfReduce(initialFileSize: number = 0) {
   const [hasDownloaded, setHasDownloaded] = useState<boolean>(false);
   const [lastQuality, setLastQuality] = useState<number | null>(null);
   const [lastMb, setLastMb] = useState<number | null>(null);
-  const [lastGray, setLastGray] = useState<number | null>(null);
-  const [lastBright, setLastBright] = useState<number | null>(null);
-  const [lastContrast, setLastContrast] = useState<number | null>(null);
-  const [lastSat, setLastSat] = useState<number | null>(null);
+  const [lastVisuals, setLastVisuals] = useState<ColorAdjustmentOptions | null>(null);
 
   const resetTargetSize = useCallback((sizeBytes: number) => {
     const mb = Math.max(0.1, Math.round((sizeBytes / (1024 * 1024)) * 100) / 100);
     setTargetMb(Math.max(0.05, Math.round(mb * 0.65 * 100) / 100));
     setQualityPercent(65);
-    setGrayscalePercent(0);
-    setBrightnessPercent(100);
-    setContrastPercent(100);
-    setSaturationPercent(100);
+    setVisuals(defaultVisuals);
     setResult(null);
     setHasDownloaded(false);
     setLastQuality(null);
     setLastMb(null);
-    setLastGray(null);
-    setLastBright(null);
-    setLastContrast(null);
-    setLastSat(null);
+    setLastVisuals(null);
   }, []);
 
-  const updateColorFilters = useCallback(
-    (opts: { grayscale?: number; brightness?: number; contrast?: number; saturation?: number }) => {
-      if (opts.grayscale !== undefined) setGrayscalePercent(opts.grayscale);
-      if (opts.brightness !== undefined) setBrightnessPercent(opts.brightness);
-      if (opts.contrast !== undefined) setContrastPercent(opts.contrast);
-      if (opts.saturation !== undefined) setSaturationPercent(opts.saturation);
-    },
-    []
-  );
+  const updateVisual = useCallback((key: keyof ColorAdjustmentOptions, val: number) => {
+    setVisuals((prev) => ({ ...prev, [key]: val }));
+  }, []);
+
+  const updateColorFilters = useCallback((patch: Partial<ColorAdjustmentOptions>) => {
+    setVisuals((prev) => ({ ...prev, ...patch }));
+  }, []);
 
   const executeReduce = useCallback(
     async (sourceBuffer: ArrayBuffer, fileSize: number) => {
@@ -73,10 +74,7 @@ export function usePdfReduce(initialFileSize: number = 0) {
           qualityPercent,
           targetMb,
           originalSize: fileSize,
-          grayscalePercent,
-          brightnessPercent,
-          contrastPercent,
-          saturationPercent,
+          ...visuals,
         };
 
         const out = await reducePdfSize(sourceBuffer, options, (percent, message) => {
@@ -91,10 +89,7 @@ export function usePdfReduce(initialFileSize: number = 0) {
         setResult(out);
         setLastQuality(qualityPercent);
         setLastMb(targetMb);
-        setLastGray(grayscalePercent);
-        setLastBright(brightnessPercent);
-        setLastContrast(contrastPercent);
-        setLastSat(saturationPercent);
+        setLastVisuals({ ...visuals });
         setHasDownloaded(false);
         return out;
       } catch (err: unknown) {
@@ -109,7 +104,7 @@ export function usePdfReduce(initialFileSize: number = 0) {
         return null;
       }
     },
-    [qualityPercent, targetMb, grayscalePercent, brightnessPercent, contrastPercent, saturationPercent]
+    [qualityPercent, targetMb, visuals]
   );
 
   const downloadResult = useCallback(
@@ -124,30 +119,13 @@ export function usePdfReduce(initialFileSize: number = 0) {
   );
 
   const isSettingsAltered = useMemo(() => {
-    if (!result || lastQuality === null || lastMb === null) return false;
-    return (
-      qualityPercent !== lastQuality ||
-      Math.abs(targetMb - lastMb) > 0.01 ||
-      grayscalePercent !== lastGray ||
-      brightnessPercent !== lastBright ||
-      contrastPercent !== lastContrast ||
-      saturationPercent !== lastSat
+    if (!result || lastQuality === null || lastMb === null || !lastVisuals) return false;
+    const baseChanged = qualityPercent !== lastQuality || Math.abs(targetMb - lastMb) > 0.01;
+    const visualsChanged = Object.keys(visuals).some(
+      (k) => visuals[k as keyof ColorAdjustmentOptions] !== lastVisuals[k as keyof ColorAdjustmentOptions]
     );
-  }, [
-    result,
-    qualityPercent,
-    targetMb,
-    grayscalePercent,
-    brightnessPercent,
-    contrastPercent,
-    saturationPercent,
-    lastQuality,
-    lastMb,
-    lastGray,
-    lastBright,
-    lastContrast,
-    lastSat,
-  ]);
+    return baseChanged || visualsChanged;
+  }, [result, qualityPercent, targetMb, visuals, lastQuality, lastMb, lastVisuals]);
 
   const isProcessing = useMemo(() => {
     return progress.status === 'processing';
@@ -156,10 +134,7 @@ export function usePdfReduce(initialFileSize: number = 0) {
   return {
     qualityPercent,
     targetMb,
-    grayscalePercent,
-    brightnessPercent,
-    contrastPercent,
-    saturationPercent,
+    visuals,
     progress,
     result,
     isProcessing,
@@ -167,10 +142,7 @@ export function usePdfReduce(initialFileSize: number = 0) {
     isSettingsAltered,
     setQualityPercent,
     setTargetMb,
-    setGrayscalePercent,
-    setBrightnessPercent,
-    setContrastPercent,
-    setSaturationPercent,
+    updateVisual,
     updateColorFilters,
     resetTargetSize,
     executeReduce,
