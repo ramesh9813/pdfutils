@@ -171,7 +171,8 @@ export async function splitPdf(
   onProgress?: (current: number, total: number, message: string) => void
 ): Promise<SplitOutput> {
   onProgress?.(0, 100, 'Loading source document...');
-  const srcDoc = await PDFDocument.load(sourceBuffer, { ignoreEncryption: false });
+  const safeBuffer = sourceBuffer.slice(0);
+  const srcDoc = await PDFDocument.load(safeBuffer, { ignoreEncryption: false });
   const totalPages = srcDoc.getPageCount();
 
   const groups = calculateSplitGroups(options, totalPages);

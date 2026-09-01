@@ -31,7 +31,8 @@ export async function mergePdfs(
       `Processing "${item.name}" (${fileIndex + 1}/${totalFiles})...`
     );
 
-    const sourceDoc = await PDFDocument.load(item.arrayBuffer, {
+    const safeBuffer = item.arrayBuffer.slice(0);
+    const sourceDoc = await PDFDocument.load(safeBuffer, {
       ignoreEncryption: false,
     });
     const docPageCount = sourceDoc.getPageCount();

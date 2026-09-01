@@ -1,19 +1,16 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { usePdfSession } from '../hooks/usePdfSession';
 import { usePdfSplit } from '../hooks/usePdfSplit';
 import { Dropzone } from '../components/common/Dropzone';
 import { Button } from '../components/common/Button';
 import { Card } from '../components/common/Card';
-import { ProgressBar } from '../components/common/ProgressBar';
 import { PagePreviewGrid } from '../components/split/PagePreviewGrid';
 import { SplitConfigPanel } from '../components/split/SplitConfigPanel';
 import {
   FileText,
   Scissors,
-  Download,
   RotateCcw,
   AlertCircle,
-  CheckCircle2,
 } from 'lucide-react';
 
 export const SplitPdfPage: React.FC = () => {
@@ -23,6 +20,7 @@ export const SplitPdfPage: React.FC = () => {
     isLoading: isSessionLoading,
     error: sessionError,
     loadFile,
+    getFreshBuffer,
     resetSession,
     rotatePage,
   } = usePdfSession();
@@ -46,7 +44,9 @@ export const SplitPdfPage: React.FC = () => {
     resetSplit,
   } = usePdfSplit(docInfo ? docInfo.name : 'document');
 
-  // Update filename prefix when docInfo changes
+  const configPanelRef = useRef<HTMLDivElement>(null);
+
+  // Synchronize filename prefix when docInfo updates
   useEffect(() => {
     if (docInfo) {
       setFilenamePrefix(docInfo.name.replace(/\.pdf$/i, ''));
@@ -62,7 +62,53 @@ export const SplitPdfPage: React.FC = () => {
 
   const handleExecuteSplit = () => {
     if (!docInfo) return;
-    executeSplit(docInfo.arrayBuffer, docInfo.pageCount);
+    const freshBuf = getFreshBuffer();
+    executeSplit(freshBuf, docInfo.pageCount);
+  };
+
+  // Split from 3-dot dropdown: top to pageNumber, and pageNumber+1 to bottom
+  const handleSplitFromHere = (pageNumber: number) => {
+    if (!docInfo) return;
+    const total = docInfo.pageCount;
+    const baseName = docInfo.name.replace(/\.pdf$/i, '');
+
+    let rangesStr: string;
+    if (pageNumber < total) {
+      rangesStr = `1-${pageNumber}, ${pageNumber + 1}-${total}`;
+    } else {
+      rangesStr = `1-${pageNumber}`;
+    }
+
+    setMode('range');
+    setCustomRanges(rangesStr);
+    const splitPrefix = `${baseName}_split_p${pageNumber}`;
+    setFilenamePrefix(splitPrefix);
+
+    // Scroll to the splitting panel at the top
+    configPanelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    // Execute split immediately with fresh buffer
+    const freshBuf = getFreshBuffer();
+    // Use timeout to let state flush
+    setTimeout(() => {
+      executeSplit(freshBuf, total);
+    }, 50);
+  };
+
+  // Extract single page from 3-dot dropdown
+  const handleExtractSinglePage = (pageNumber: number) => {
+    if (!docInfo) return;
+    const baseName = docInfo.name.replace(/\.pdf$/i, '');
+
+    setMode('extract');
+    setMergeExtracted(true);
+    setFilenamePrefix(`${baseName}_page_${pageNumber}`);
+    
+    // Select just this page
+    deselectAll();
+    togglePage(pageNumber);
+
+    configPanelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   const handleResetAll = () => {
@@ -77,7 +123,7 @@ export const SplitPdfPage: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col gap-6 w-full">
+    <div className="flex flex-col gap-6 w-full pb-12">
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-4">
         <div>
@@ -86,7 +132,7 @@ export const SplitPdfPage: React.FC = () => {
             Split PDF Document
           </h1>
           <p className="text-xs sm:text-sm text-text-sub mt-0.5">
-            Extract selected pages, slice by custom intervals, or unpack into separate files.
+            Configure splitting at top, inspect live page previews below, or split instantly from any page's 3-dot menu.
           </p>
         </div>
 
@@ -104,7 +150,7 @@ export const SplitPdfPage: React.FC = () => {
         )}
       </div>
 
-      {/* Error Banners */}
+      {/* Error Banner */}
       {sessionError && (
         <div className="flex items-center gap-2 rounded border border-danger bg-rose-50 p-3 text-xs text-danger">
           <AlertCircle className="h-4 w-4 shrink-0" />
@@ -124,7 +170,7 @@ export const SplitPdfPage: React.FC = () => {
         </div>
       )}
 
-      {/* Loading Document Initializing State */}
+      {/* Loading Document State */}
       {isSessionLoading && (
         <Card className="flex flex-col items-center justify-center p-12 text-center gap-3">
           <div className="flex h-12 w-12 items-center justify-center rounded border border-border bg-bg-subtle text-primary">
@@ -139,7 +185,7 @@ export const SplitPdfPage: React.FC = () => {
         </Card>
       )}
 
-      {/* Document Loaded Workspace */}
+      {/* Document Loaded Workspace: SETUP AT TOP, PREVIEW AT BOTTOM */}
       {docInfo && !isSessionLoading && (
         <div className="flex flex-col gap-6">
           {/* Document metadata banner */}
@@ -149,7 +195,10 @@ export const SplitPdfPage: React.FC = () => {
                 <FileText className="h-4 w-4" />
               </div>
               <div className="flex flex-col min-w-0">
-                <span className="text-xs sm:text-sm font-bold text-text-main truncate" title={docInfo.name}>
+                <span
+                  className="text-xs sm:text-sm font-bold text-text-main truncate"
+                  title={docInfo.name}
+                >
                   {docInfo.name}
                 </span>
                 <span className="text-[11px] text-text-muted">
@@ -165,71 +214,50 @@ export const SplitPdfPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Progress or Completion Banner */}
-          {progress.status !== 'idle' && (
-            <ProgressBar progress={progress} />
-          )}
+          {/* 1. TOP SECTION: Splitting Setup */}
+          <div ref={configPanelRef} className="w-full">
+            <SplitConfigPanel
+              options={options}
+              totalPages={docInfo.pageCount}
+              isProcessing={isProcessing}
+              progress={progress}
+              result={result}
+              onSetMode={setMode}
+              onSetCustomRanges={setCustomRanges}
+              onSetEveryN={setEveryN}
+              onSetMergeExtracted={setMergeExtracted}
+              onSetFilenamePrefix={setFilenamePrefix}
+              onExecuteSplit={handleExecuteSplit}
+              onDownload={downloadResult}
+              onResetSplit={resetSplit}
+            />
+          </div>
 
-          {/* Completion Download Card */}
-          {result && (
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 rounded border border-emerald-300 bg-emerald-50 p-4 text-emerald-900">
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-white">
-                  <CheckCircle2 className="h-5 w-5" />
-                </div>
-                <div>
-                  <h3 className="text-sm font-bold">Split Processing Completed!</h3>
-                  <p className="text-xs text-emerald-800">
-                    Generated <strong>{result.fileCount}</strong> file(s) ({result.isZip ? 'ZIP Archive' : 'PDF Document'}). Ready for immediate local download.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2 w-full sm:w-auto">
-                <Button
-                  type="button"
-                  variant="primary"
-                  size="md"
-                  onClick={downloadResult}
-                  leftIcon={<Download className="h-4 w-4" />}
-                  className="w-full sm:w-auto"
-                >
-                  Download {result.filename}
-                </Button>
+          {/* 2. BOTTOM SECTION: Page Preview Grid */}
+          <div className="flex flex-col gap-3 pt-2">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-base font-bold text-text-main">
+                  Document Pages Preview ({pages.length})
+                </h3>
+                <p className="text-xs text-text-muted">
+                  Click pages to select/deselect, rotate orientation, or click the 3 dots on any page to split from there.
+                </p>
               </div>
             </div>
-          )}
 
-          {/* 2-Column Split Interface */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-            {/* Left: Preview Grid */}
-            <div className="lg:col-span-8 flex flex-col gap-4">
-              <PagePreviewGrid
-                pages={pages}
-                selectedPages={options.selectedPages}
-                onTogglePage={togglePage}
-                onSelectAll={selectAll}
-                onDeselectAll={deselectAll}
-                onInvertSelection={invertSelection}
-                onRotatePage={rotatePage}
-                disabled={isProcessing}
-              />
-            </div>
-
-            {/* Right: Configuration Panel */}
-            <div className="lg:col-span-4 sticky top-20">
-              <SplitConfigPanel
-                options={options}
-                totalPages={docInfo.pageCount}
-                isProcessing={isProcessing}
-                onSetMode={setMode}
-                onSetCustomRanges={setCustomRanges}
-                onSetEveryN={setEveryN}
-                onSetMergeExtracted={setMergeExtracted}
-                onSetFilenamePrefix={setFilenamePrefix}
-                onExecuteSplit={handleExecuteSplit}
-              />
-            </div>
+            <PagePreviewGrid
+              pages={pages}
+              selectedPages={options.selectedPages}
+              onTogglePage={togglePage}
+              onSelectAll={selectAll}
+              onDeselectAll={deselectAll}
+              onInvertSelection={invertSelection}
+              onRotatePage={rotatePage}
+              onSplitFromHere={handleSplitFromHere}
+              onExtractSinglePage={handleExtractSinglePage}
+              disabled={isProcessing}
+            />
           </div>
         </div>
       )}

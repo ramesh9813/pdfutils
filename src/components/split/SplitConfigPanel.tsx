@@ -1,32 +1,56 @@
 import React, { useMemo } from 'react';
-import type { SplitOptions, SplitMode, SplitRange } from '../../types/pdf.types';
+import type {
+  SplitOptions,
+  SplitMode,
+  SplitRange,
+  ProgressState,
+  SplitOutput,
+} from '../../types/pdf.types';
 import { Card } from '../common/Card';
 import { Button } from '../common/Button';
 import { parseRangeString } from '../../services/pdfSplitter';
-import { Scissors, CheckSquare, Layers, FileArchive, ArrowRight } from 'lucide-react';
+import {
+  Scissors,
+  CheckSquare,
+  Layers,
+  FileArchive,
+  ArrowRight,
+  Download,
+  Loader2,
+  CheckCircle2,
+  RotateCcw,
+} from 'lucide-react';
 
 export interface SplitConfigPanelProps {
   options: SplitOptions;
   totalPages: number;
   isProcessing: boolean;
+  progress: ProgressState;
+  result: SplitOutput | null;
   onSetMode: (mode: SplitMode) => void;
   onSetCustomRanges: (ranges: string) => void;
   onSetEveryN: (n: number) => void;
   onSetMergeExtracted: (val: boolean) => void;
   onSetFilenamePrefix: (prefix: string) => void;
   onExecuteSplit: () => void;
+  onDownload: () => void;
+  onResetSplit: () => void;
 }
 
 export const SplitConfigPanel: React.FC<SplitConfigPanelProps> = ({
   options,
   totalPages,
   isProcessing,
+  progress,
+  result,
   onSetMode,
   onSetCustomRanges,
   onSetEveryN,
   onSetMergeExtracted,
   onSetFilenamePrefix,
   onExecuteSplit,
+  onDownload,
+  onResetSplit,
 }) => {
   const rangeValidation = useMemo((): { valid: boolean; ranges: SplitRange[]; error?: string } => {
     if (options.mode !== 'range') return { valid: true, ranges: [] };
@@ -37,7 +61,7 @@ export const SplitConfigPanel: React.FC<SplitConfigPanelProps> = ({
     switch (options.mode) {
       case 'extract': {
         const count = options.selectedPages.length;
-        if (count === 0) return 'No pages selected.';
+        if (count === 0) return 'No pages selected yet. Click pages in the preview below to pick.';
         return options.mergeExtracted
           ? `Will produce 1 merged PDF containing ${count} selected page(s).`
           : `Will produce ${count} individual PDF files in a ZIP archive.`;
@@ -69,11 +93,34 @@ export const SplitConfigPanel: React.FC<SplitConfigPanelProps> = ({
     return true;
   }, [isProcessing, options, rangeValidation]);
 
+  const progressPercent = Math.min(
+    100,
+    Math.max(0, Math.round((progress.current / progress.total) * 100))
+  );
+
   return (
-    <Card className="flex flex-col gap-6">
-      <div>
-        <h3 className="text-base font-bold text-text-main mb-1">Split Configuration</h3>
-        <p className="text-xs text-text-muted">Choose your splitting method and customize output parameters.</p>
+    <Card className="flex flex-col gap-5 border border-border bg-bg-surface p-5 sm:p-6 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border pb-3">
+        <div>
+          <h2 className="text-base sm:text-lg font-bold text-text-main">
+            Splitting Setup
+          </h2>
+          <p className="text-xs text-text-muted">
+            Configure your splitting mode and parameters. Page previews are displayed below.
+          </p>
+        </div>
+
+        {result && (
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={onResetSplit}
+            leftIcon={<RotateCcw className="h-3.5 w-3.5" />}
+          >
+            Split Again
+          </Button>
+        )}
       </div>
 
       {/* Mode Selection Tabs */}
@@ -81,27 +128,29 @@ export const SplitConfigPanel: React.FC<SplitConfigPanelProps> = ({
         <button
           type="button"
           onClick={() => onSetMode('extract')}
+          disabled={isProcessing}
           className={`flex flex-col items-center justify-center p-3 rounded border text-center transition-all ${
             options.mode === 'extract'
-              ? 'border-primary bg-sky-50/70 text-primary font-medium ring-1 ring-primary'
+              ? 'border-primary bg-sky-50/80 text-primary font-medium ring-1 ring-primary'
               : 'border-border bg-bg-surface hover:bg-bg-subtle text-text-sub'
           }`}
         >
-          <CheckSquare className="h-5 w-5 mb-1.5" />
+          <CheckSquare className="h-5 w-5 mb-1 text-primary" />
           <span className="text-xs font-semibold">Extract Pages</span>
-          <span className="text-[10px] text-text-muted mt-0.5">Pick visually</span>
+          <span className="text-[10px] text-text-muted mt-0.5">Select in preview</span>
         </button>
 
         <button
           type="button"
           onClick={() => onSetMode('range')}
+          disabled={isProcessing}
           className={`flex flex-col items-center justify-center p-3 rounded border text-center transition-all ${
             options.mode === 'range'
-              ? 'border-primary bg-sky-50/70 text-primary font-medium ring-1 ring-primary'
+              ? 'border-primary bg-sky-50/80 text-primary font-medium ring-1 ring-primary'
               : 'border-border bg-bg-surface hover:bg-bg-subtle text-text-sub'
           }`}
         >
-          <Scissors className="h-5 w-5 mb-1.5" />
+          <Scissors className="h-5 w-5 mb-1 text-primary" />
           <span className="text-xs font-semibold">By Range</span>
           <span className="text-[10px] text-text-muted mt-0.5">e.g. 1-3, 5-8</span>
         </button>
@@ -109,13 +158,14 @@ export const SplitConfigPanel: React.FC<SplitConfigPanelProps> = ({
         <button
           type="button"
           onClick={() => onSetMode('every_n')}
+          disabled={isProcessing}
           className={`flex flex-col items-center justify-center p-3 rounded border text-center transition-all ${
             options.mode === 'every_n'
-              ? 'border-primary bg-sky-50/70 text-primary font-medium ring-1 ring-primary'
+              ? 'border-primary bg-sky-50/80 text-primary font-medium ring-1 ring-primary'
               : 'border-border bg-bg-surface hover:bg-bg-subtle text-text-sub'
           }`}
         >
-          <Layers className="h-5 w-5 mb-1.5" />
+          <Layers className="h-5 w-5 mb-1 text-primary" />
           <span className="text-xs font-semibold">Every N Pages</span>
           <span className="text-[10px] text-text-muted mt-0.5">Chunk equally</span>
         </button>
@@ -123,25 +173,28 @@ export const SplitConfigPanel: React.FC<SplitConfigPanelProps> = ({
         <button
           type="button"
           onClick={() => onSetMode('single')}
+          disabled={isProcessing}
           className={`flex flex-col items-center justify-center p-3 rounded border text-center transition-all ${
             options.mode === 'single'
-              ? 'border-primary bg-sky-50/70 text-primary font-medium ring-1 ring-primary'
+              ? 'border-primary bg-sky-50/80 text-primary font-medium ring-1 ring-primary'
               : 'border-border bg-bg-surface hover:bg-bg-subtle text-text-sub'
           }`}
         >
-          <FileArchive className="h-5 w-5 mb-1.5" />
+          <FileArchive className="h-5 w-5 mb-1 text-primary" />
           <span className="text-xs font-semibold">All Pages</span>
           <span className="text-[10px] text-text-muted mt-0.5">1 page per file</span>
         </button>
       </div>
 
       {/* Mode Specific Inputs */}
-      <div className="flex flex-col gap-4 rounded border border-border bg-bg-subtle p-4 text-xs">
+      <div className="rounded border border-border bg-bg-subtle p-4 text-xs">
         {options.mode === 'extract' && (
           <div className="flex flex-col gap-3">
             <div className="flex items-center justify-between">
-              <span className="font-semibold text-text-main">Extraction Output Mode:</span>
-              <span className="text-text-muted font-mono">{options.selectedPages.length} pages selected</span>
+              <span className="font-semibold text-text-main">Extraction Output Format:</span>
+              <span className="text-primary font-mono font-medium">
+                {options.selectedPages.length} of {totalPages} pages selected
+              </span>
             </div>
 
             <label className="flex items-center gap-2 cursor-pointer select-none text-text-sub hover:text-text-main">
@@ -150,9 +203,10 @@ export const SplitConfigPanel: React.FC<SplitConfigPanelProps> = ({
                 name="extractOutput"
                 checked={options.mergeExtracted}
                 onChange={() => onSetMergeExtracted(true)}
+                disabled={isProcessing}
                 className="h-4 w-4 text-primary accent-primary"
               />
-              <span>Merge all extracted pages into a <strong>single PDF document</strong></span>
+              <span>Merge selected pages into a <strong>single continuous PDF</strong></span>
             </label>
 
             <label className="flex items-center gap-2 cursor-pointer select-none text-text-sub hover:text-text-main">
@@ -161,23 +215,28 @@ export const SplitConfigPanel: React.FC<SplitConfigPanelProps> = ({
                 name="extractOutput"
                 checked={!options.mergeExtracted}
                 onChange={() => onSetMergeExtracted(false)}
+                disabled={isProcessing}
                 className="h-4 w-4 text-primary accent-primary"
               />
-              <span>Save each extracted page as an <strong>individual file (.ZIP archive)</strong></span>
+              <span>Download selected pages as <strong>individual separate PDFs (.ZIP archive)</strong></span>
             </label>
           </div>
         )}
 
         {options.mode === 'range' && (
           <div className="flex flex-col gap-2">
-            <label className="font-semibold text-text-main" htmlFor="range-input">
-              Specify Page Ranges:
-            </label>
+            <div className="flex items-center justify-between">
+              <label className="font-semibold text-text-main" htmlFor="range-input">
+                Specify Page Ranges:
+              </label>
+              <span className="text-[11px] text-text-muted">Total: {totalPages} pages</span>
+            </div>
             <input
               id="range-input"
               type="text"
               value={options.customRanges}
               onChange={(e) => onSetCustomRanges(e.target.value)}
+              disabled={isProcessing}
               placeholder="e.g. 1-3, 5, 7-9"
               className={`w-full rounded border px-3 py-2 text-xs font-mono bg-bg-surface text-text-main outline-none focus:border-primary ${
                 !rangeValidation.valid ? 'border-danger' : 'border-border'
@@ -187,26 +246,30 @@ export const SplitConfigPanel: React.FC<SplitConfigPanelProps> = ({
               <p className="text-[11px] text-danger">{rangeValidation.error}</p>
             ) : (
               <p className="text-[11px] text-text-muted">
-                Separate page numbers and ranges by commas. Document has {totalPages} total pages.
+                Separate page numbers or ranges by commas. Example: <code className="bg-bg-surface px-1 py-0.5 rounded border border-border">1-3, 4-6</code>
               </p>
             )}
 
-            {/* Helper quick chips */}
+            {/* Quick helper chips */}
             <div className="flex flex-wrap gap-1.5 mt-1">
               <button
                 type="button"
                 onClick={() => onSetCustomRanges(`1-${Math.ceil(totalPages / 2)}`)}
+                disabled={isProcessing}
                 className="px-2 py-0.5 rounded border border-border bg-bg-surface hover:bg-border text-text-sub text-[11px]"
               >
-                First Half (1-{Math.ceil(totalPages / 2)})
+                First Half (1–{Math.ceil(totalPages / 2)})
               </button>
               {totalPages > 1 && (
                 <button
                   type="button"
-                  onClick={() => onSetCustomRanges(`${Math.ceil(totalPages / 2) + 1}-${totalPages}`)}
+                  onClick={() =>
+                    onSetCustomRanges(`${Math.ceil(totalPages / 2) + 1}-${totalPages}`)
+                  }
+                  disabled={isProcessing}
                   className="px-2 py-0.5 rounded border border-border bg-bg-surface hover:bg-border text-text-sub text-[11px]"
                 >
-                  Second Half ({Math.ceil(totalPages / 2) + 1}-{totalPages})
+                  Second Half ({Math.ceil(totalPages / 2) + 1}–{totalPages})
                 </button>
               )}
             </div>
@@ -216,7 +279,7 @@ export const SplitConfigPanel: React.FC<SplitConfigPanelProps> = ({
         {options.mode === 'every_n' && (
           <div className="flex flex-col gap-2">
             <label className="font-semibold text-text-main" htmlFor="every-n-input">
-              Split Interval (Pages per PDF):
+              Pages per Split Document:
             </label>
             <div className="flex items-center gap-3">
               <input
@@ -226,10 +289,11 @@ export const SplitConfigPanel: React.FC<SplitConfigPanelProps> = ({
                 max={totalPages}
                 value={options.everyN}
                 onChange={(e) => onSetEveryN(parseInt(e.target.value, 10) || 1)}
+                disabled={isProcessing}
                 className="w-24 rounded border border-border px-3 py-2 text-xs font-mono bg-bg-surface text-text-main outline-none focus:border-primary"
               />
               <span className="text-text-sub">
-                Yields <strong>{Math.ceil(totalPages / (options.everyN || 1))}</strong> file(s)
+                Yields <strong>{Math.ceil(totalPages / (options.everyN || 1))}</strong> file(s) in a ZIP archive
               </span>
             </div>
           </div>
@@ -237,14 +301,14 @@ export const SplitConfigPanel: React.FC<SplitConfigPanelProps> = ({
 
         {options.mode === 'single' && (
           <p className="text-text-sub">
-            Each of the <strong>{totalPages}</strong> pages will be saved as an independent single-page PDF document.
+            All <strong>{totalPages}</strong> pages will be cleanly decomposed into individual 1-page PDF documents packed inside a ZIP archive.
           </p>
         )}
       </div>
 
       {/* Output Filename Prefix */}
-      <div className="flex flex-col gap-1.5">
-        <label className="text-xs font-semibold text-text-main" htmlFor="prefix-input">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+        <label className="text-xs font-semibold text-text-main whitespace-nowrap" htmlFor="prefix-input">
           File Name Prefix:
         </label>
         <input
@@ -252,30 +316,90 @@ export const SplitConfigPanel: React.FC<SplitConfigPanelProps> = ({
           type="text"
           value={options.filenamePrefix}
           onChange={(e) => onSetFilenamePrefix(e.target.value)}
+          disabled={isProcessing}
           placeholder="split-document"
-          className="w-full rounded border border-border px-3 py-2 text-xs bg-bg-surface text-text-main outline-none focus:border-primary"
+          className="flex-1 w-full rounded border border-border px-3 py-2 text-xs bg-bg-surface text-text-main outline-none focus:border-primary"
         />
       </div>
 
-      {/* Execution Summary & Trigger */}
-      <div className="flex flex-col gap-3 pt-2 border-t border-border">
-        <div className="rounded border border-border bg-bg-subtle p-3 text-xs text-text-sub">
-          <span className="font-semibold text-text-main">Summary: </span>
-          {outputSummary}
-        </div>
+      {/* Summary Box */}
+      <div className="rounded border border-border bg-bg-subtle p-3 text-xs text-text-sub">
+        <span className="font-semibold text-text-main">Plan Summary: </span>
+        {outputSummary}
+      </div>
 
-        <Button
-          type="button"
-          variant="primary"
-          size="lg"
-          onClick={onExecuteSplit}
-          disabled={!canExecute}
-          isLoading={isProcessing}
-          rightIcon={<ArrowRight className="h-4 w-4" />}
-          className="w-full"
-        >
-          {isProcessing ? 'Processing PDF...' : 'Execute Split & Download'}
-        </Button>
+      {/* Execution, Loading & Download Section */}
+      <div className="flex flex-col gap-3 pt-2 border-t border-border">
+        {/* If already completed, show prominent Download Button */}
+        {result ? (
+          <div className="flex flex-col gap-3">
+            <div className="flex items-center gap-2 text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 p-3 rounded">
+              <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" />
+              <span>
+                Split complete! Generated <strong>{result.fileCount}</strong> {result.isZip ? 'files in ZIP archive' : 'page(s) in PDF'}.
+              </span>
+            </div>
+
+            <Button
+              type="button"
+              variant="primary"
+              size="lg"
+              onClick={onDownload}
+              leftIcon={<Download className="h-5 w-5" />}
+              className="w-full bg-emerald-600 hover:bg-emerald-700 border-emerald-600 font-semibold py-3 text-base shadow-sm"
+            >
+              Download {result.filename}
+            </Button>
+          </div>
+        ) : (
+          /* Split Button (Transforms into Loading Button during processing) */
+          <div className="flex flex-col gap-3">
+            <Button
+              type="button"
+              variant="primary"
+              size="lg"
+              onClick={onExecuteSplit}
+              disabled={!canExecute || isProcessing}
+              className={`w-full font-semibold py-3 text-base transition-all ${
+                isProcessing
+                  ? 'bg-sky-600 border-sky-600 cursor-wait'
+                  : 'bg-primary hover:bg-primary-hover border-primary shadow-sm'
+              }`}
+            >
+              {isProcessing ? (
+                <span className="flex items-center gap-2">
+                  <Loader2 className="h-5 w-5 animate-spin text-white" />
+                  <span>Splitting PDF... ({progressPercent}%)</span>
+                </span>
+              ) : (
+                <span className="flex items-center gap-2">
+                  <Scissors className="h-5 w-5" />
+                  <span>Execute Split & Download</span>
+                  <ArrowRight className="h-4 w-4" />
+                </span>
+              )}
+            </Button>
+
+            {/* Real-time Progress Bar Just Below the Button */}
+            {isProcessing && (
+              <div className="w-full rounded border border-border bg-bg-surface p-3 transition-all animate-fadeIn">
+                <div className="flex items-center justify-between mb-1.5 text-xs">
+                  <span className="font-medium text-text-main flex items-center gap-1.5">
+                    <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
+                    {progress.message || 'Processing pages...'}
+                  </span>
+                  <span className="font-mono font-bold text-primary">{progressPercent}%</span>
+                </div>
+                <div className="h-2.5 w-full overflow-hidden rounded bg-bg-subtle border border-border">
+                  <div
+                    className="h-full bg-primary transition-all duration-200"
+                    style={{ width: `${progressPercent}%` }}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </Card>
   );

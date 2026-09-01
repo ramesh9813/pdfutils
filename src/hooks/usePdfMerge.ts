@@ -31,14 +31,15 @@ export function usePdfMerge() {
 
     for (const file of validFiles) {
       try {
-        const buffer = await file.arrayBuffer();
-        const pageCount = await getPdfPageCount(buffer);
+        const rawBuffer = await file.arrayBuffer();
+        const masterBytes = new Uint8Array(rawBuffer);
+        const pageCount = await getPdfPageCount(masterBytes);
         const id = crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`;
 
         const newItem: MergeItem = {
           id,
           file,
-          arrayBuffer: buffer,
+          arrayBuffer: masterBytes.slice().buffer as ArrayBuffer,
           name: file.name,
           size: file.size,
           pageCount,
@@ -49,7 +50,7 @@ export function usePdfMerge() {
         setItems((prev) => [...prev, newItem]);
 
         // Render preview of first page asynchronously
-        renderPageThumbnail(buffer, 1, 200)
+        renderPageThumbnail(masterBytes, 1, 200)
           .then((thumb) => {
             setItems((prev) =>
               prev.map((it) => (it.id === id ? { ...it, thumbnailUrl: thumb } : it))

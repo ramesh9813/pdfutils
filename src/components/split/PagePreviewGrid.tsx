@@ -13,6 +13,8 @@ export interface PagePreviewGridProps {
   onDeselectAll: () => void;
   onInvertSelection: (totalCount: number) => void;
   onRotatePage: (pageNumber: number) => void;
+  onSplitFromHere?: (pageNumber: number) => void;
+  onExtractSinglePage?: (pageNumber: number) => void;
   disabled?: boolean;
 }
 
@@ -24,6 +26,8 @@ export const PagePreviewGrid: React.FC<PagePreviewGridProps> = ({
   onDeselectAll,
   onInvertSelection,
   onRotatePage,
+  onSplitFromHere,
+  onExtractSinglePage,
   disabled = false,
 }) => {
   const [previewModalPage, setPreviewModalPage] = useState<PdfPageDetail | null>(null);
@@ -121,10 +125,13 @@ export const PagePreviewGrid: React.FC<PagePreviewGridProps> = ({
           <PageThumbnailCard
             key={page.pageNumber}
             page={page}
+            totalPages={totalPages}
             isSelected={selectedPages.includes(page.pageNumber)}
             onToggleSelect={onTogglePage}
             onRotate={onRotatePage}
             onPreview={setPreviewModalPage}
+            onSplitFromHere={onSplitFromHere}
+            onExtractSinglePage={onExtractSinglePage}
             disabled={disabled}
           />
         ))}
