@@ -31,15 +31,29 @@ export const CardHeaderBar: React.FC<CardHeaderBarProps> = ({
   onExtractSinglePage,
 }) => {
   return (
-    <div className="flex items-center justify-between px-2 py-1.5 bg-bg-subtle/80 border-b border-border text-xs z-10">
-      <span className="font-bold font-mono text-text-main text-[11px]">
-        p.{page.pageNumber}
-        {page.originalPageIndex !== page.pageNumber - 1 && (
-          <span className="text-[10px] text-amber-600 font-semibold ml-0.5">
-            ({page.originalPageIndex + 1})
+    <div
+      className={`flex items-center justify-between px-2 py-1.5 border-b text-xs z-10 transition-colors ${
+        isSplitPoint
+          ? 'bg-blue-600 text-white border-blue-700'
+          : 'bg-bg-subtle/80 text-text-main border-border'
+      }`}
+    >
+      <div className="flex items-center gap-1.5 min-w-0">
+        <span className="font-bold font-mono text-[11px]">
+          p.{page.pageNumber}
+        </span>
+        {isSplitPoint ? (
+          <span className="bg-white/25 text-white text-[9px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider">
+            Cut Point
           </span>
+        ) : (
+          page.originalPageIndex !== page.pageNumber - 1 && (
+            <span className="text-[10px] text-amber-600 font-semibold ml-0.5">
+              ({page.originalPageIndex + 1})
+            </span>
+          )
         )}
-      </span>
+      </div>
 
       <div className="flex items-center gap-0.5">
         {onMoveLeft && page.pageNumber > 1 && (
@@ -50,7 +64,9 @@ export const CardHeaderBar: React.FC<CardHeaderBarProps> = ({
               onMoveLeft(page.pageNumber);
             }}
             title="Move Left"
-            className="p-0.5 rounded text-text-muted hover:text-text-main hover:bg-bg-subtle"
+            className={`p-0.5 rounded ${
+              isSplitPoint ? 'text-white/80 hover:text-white hover:bg-white/20' : 'text-text-muted hover:text-text-main hover:bg-bg-subtle'
+            }`}
           >
             <ChevronLeft className="h-3 w-3" />
           </button>
@@ -63,7 +79,9 @@ export const CardHeaderBar: React.FC<CardHeaderBarProps> = ({
               onMoveRight(page.pageNumber);
             }}
             title="Move Right"
-            className="p-0.5 rounded text-text-muted hover:text-text-main hover:bg-bg-subtle"
+            className={`p-0.5 rounded ${
+              isSplitPoint ? 'text-white/80 hover:text-white hover:bg-white/20' : 'text-text-muted hover:text-text-main hover:bg-bg-subtle'
+            }`}
           >
             <ChevronRight className="h-3 w-3" />
           </button>

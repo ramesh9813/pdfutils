@@ -53,6 +53,7 @@ export const PageThumbnailCard: React.FC<PageThumbnailCardProps> = ({
   const [holdProgress, setHoldProgress] = useState(0);
 
   const clickTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const lastClickTimeRef = useRef<number>(0);
   const holdIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const holdStartTimeRef = useRef<number>(0);
   const didTriggerHoldRef = useRef(false);
@@ -79,6 +80,17 @@ export const PageThumbnailCard: React.FC<PageThumbnailCardProps> = ({
     }, 50);
   };
 
+  const handleDoubleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (clickTimerRef.current) {
+      clearTimeout(clickTimerRef.current);
+      clickTimerRef.current = null;
+    }
+    lastClickTimeRef.current = 0;
+    onToggleSplitPoint?.(page.pageNumber);
+  };
+
   const handleClick = () => {
     if (didTriggerHoldRef.current) {
       didTriggerHoldRef.current = false;
@@ -88,12 +100,19 @@ export const PageThumbnailCard: React.FC<PageThumbnailCardProps> = ({
       onDropOnPage(page.pageNumber);
       return;
     }
-    if (clickTimerRef.current) {
-      clearTimeout(clickTimerRef.current);
-      clickTimerRef.current = null;
+
+    const now = Date.now();
+    if (now - lastClickTimeRef.current < 450) {
+      lastClickTimeRef.current = 0;
+      if (clickTimerRef.current) {
+        clearTimeout(clickTimerRef.current);
+        clickTimerRef.current = null;
+      }
       onToggleSplitPoint?.(page.pageNumber);
       return;
     }
+    lastClickTimeRef.current = now;
+
     clickTimerRef.current = setTimeout(() => {
       clickTimerRef.current = null;
       if (onToggleSelect) {
@@ -101,7 +120,7 @@ export const PageThumbnailCard: React.FC<PageThumbnailCardProps> = ({
       } else {
         onPreviewFull?.(page);
       }
-    }, 250);
+    }, 320);
   };
 
   return (
@@ -110,16 +129,17 @@ export const PageThumbnailCard: React.FC<PageThumbnailCardProps> = ({
       onPointerUp={clearHold}
       onPointerLeave={clearHold}
       onClick={handleClick}
-      className={`group relative flex flex-col rounded-lg border bg-bg-surface overflow-hidden shadow-xs select-none cursor-pointer transition-all duration-150 ${
+      onDoubleClick={handleDoubleClick}
+      className={`group relative flex flex-col rounded-lg border overflow-hidden shadow-xs select-none cursor-pointer transition-all duration-150 ${
         isHeld
-          ? 'border-amber-500 ring-2 ring-amber-500 shadow-md opacity-90'
+          ? 'border-amber-500 ring-2 ring-amber-500 shadow-md opacity-90 bg-bg-surface'
           : isDropTarget
           ? 'border-amber-400 ring-2 ring-amber-300 ring-dashed hover:ring-amber-500 bg-amber-50/20'
           : isSplitPoint
-          ? 'border-blue-600 ring-2 ring-blue-500 shadow-md'
+          ? 'border-blue-600 ring-4 ring-blue-500/60 shadow-lg bg-blue-50/80'
           : isSelected
-          ? 'border-primary ring-2 ring-primary/40'
-          : 'border-border hover:border-primary/50'
+          ? 'border-primary ring-2 ring-primary/40 bg-bg-surface'
+          : 'border-border hover:border-primary/50 bg-bg-surface'
       }`}
     >
       <CardHeaderBar
