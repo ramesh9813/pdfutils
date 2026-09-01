@@ -7,6 +7,7 @@ import {
   Layers,
   ArrowUpDown,
   Minimize2,
+  RefreshCw,
   Upload,
   FileText,
 } from 'lucide-react';
@@ -33,21 +34,25 @@ export const LandingHero: React.FC = () => {
   };
 
   const handleLaunch = (path: string) => {
-    if (stagedFile) {
-      setSharedFile(stagedFile);
-    }
+    if (stagedFile) setSharedFile(stagedFile);
     navigate(path);
   };
 
+  const tools = [
+    { path: '/convert', label: 'Convert', icon: <RefreshCw className="h-3.5 w-3.5 text-rose-500" /> },
+    { path: '/reduce', label: 'Reduce', icon: <Minimize2 className="h-3.5 w-3.5 text-emerald-500" /> },
+    { path: '/split', label: 'Split', icon: <Scissors className="h-3.5 w-3.5 text-primary" /> },
+    { path: '/merge', label: 'Merge', icon: <Layers className="h-3.5 w-3.5 text-indigo-500" /> },
+    { path: '/reorder', label: 'Reorder', icon: <ArrowUpDown className="h-3.5 w-3.5 text-amber-500" /> },
+  ];
+
   return (
     <section className="relative text-center max-w-4xl mx-auto flex flex-col items-center gap-4 pt-2 sm:pt-6">
-      {/* Privacy Pill */}
-      <div className="inline-flex items-center gap-1.5 rounded-full border border-emerald-300/80 bg-emerald-50/90 px-3 py-0.5 text-xs font-semibold text-emerald-800 shadow-2xs">
+      <div className="inline-flex items-center gap-1.5 rounded-full border border-emerald-300/80 bg-emerald-50/90 dark:bg-emerald-950/40 px-3 py-0.5 text-xs font-semibold text-emerald-800 dark:text-emerald-300 shadow-2xs">
         <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
         <span>100% Client-Side • Zero Server Uploads</span>
       </div>
 
-      {/* Main Headline */}
       <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-text-main">
         In-Browser{' '}
         <span className="bg-gradient-to-r from-primary to-indigo-600 bg-clip-text text-transparent">
@@ -56,10 +61,10 @@ export const LandingHero: React.FC = () => {
       </h1>
 
       <p className="text-xs sm:text-sm text-text-sub max-w-md">
-        Split, merge, reorder, and compress PDFs locally in browser memory.
+        Split, merge, convert, and compress PDFs locally in browser memory.
       </p>
 
-      {/* Interactive Quick Dropzone / Router */}
+      {/* Interactive Quick Dropzone */}
       <div
         onDragOver={(e) => e.preventDefault()}
         onDrop={handleFileDrop}
@@ -107,78 +112,35 @@ export const LandingHero: React.FC = () => {
             </div>
 
             <div className="flex flex-wrap items-center justify-center gap-2">
-              <button
-                type="button"
-                onClick={() => handleLaunch('/split')}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-primary text-white hover:bg-sky-600 shadow-xs"
-              >
-                <Scissors className="h-3.5 w-3.5" />
-                Split Slices
-              </button>
-              <button
-                type="button"
-                onClick={() => handleLaunch('/merge')}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-800 text-white hover:bg-slate-900 shadow-xs"
-              >
-                <Layers className="h-3.5 w-3.5" />
-                Insert / Merge
-              </button>
-              <button
-                type="button"
-                onClick={() => handleLaunch('/reorder')}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-600 text-white hover:bg-amber-700 shadow-xs"
-              >
-                <ArrowUpDown className="h-3.5 w-3.5" />
-                Reorder Pages
-              </button>
-              <button
-                type="button"
-                onClick={() => handleLaunch('/reduce')}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-600 text-white hover:bg-emerald-700 shadow-xs"
-              >
-                <Minimize2 className="h-3.5 w-3.5" />
-                Reduce Size
-              </button>
+              {tools.map((t) => (
+                <button
+                  key={t.path}
+                  type="button"
+                  onClick={() => handleLaunch(t.path)}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-bg-surface border border-border hover:border-primary/50 text-text-main hover:bg-bg-subtle shadow-2xs"
+                >
+                  {t.icon}
+                  {t.label}
+                </button>
+              ))}
             </div>
           </div>
         )}
       </div>
 
-      {/* Direct Navigation Links if no file dropped */}
       {!stagedFile && (
         <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
-          <button
-            type="button"
-            onClick={() => navigate('/split')}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-bg-surface border border-border hover:border-primary/50 text-text-main shadow-2xs hover:shadow-xs transition-all"
-          >
-            <Scissors className="h-3.5 w-3.5 text-primary" />
-            Split
-          </button>
-          <button
-            type="button"
-            onClick={() => navigate('/merge')}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-bg-surface border border-border hover:border-primary/50 text-text-main shadow-2xs hover:shadow-xs transition-all"
-          >
-            <Layers className="h-3.5 w-3.5 text-indigo-600" />
-            Merge
-          </button>
-          <button
-            type="button"
-            onClick={() => navigate('/reorder')}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-bg-surface border border-border hover:border-primary/50 text-text-main shadow-2xs hover:shadow-xs transition-all"
-          >
-            <ArrowUpDown className="h-3.5 w-3.5 text-amber-600" />
-            Reorder
-          </button>
-          <button
-            type="button"
-            onClick={() => navigate('/reduce')}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-bg-surface border border-border hover:border-primary/50 text-text-main shadow-2xs hover:shadow-xs transition-all"
-          >
-            <Minimize2 className="h-3.5 w-3.5 text-emerald-600" />
-            Reduce
-          </button>
+          {tools.map((t) => (
+            <button
+              key={t.path}
+              type="button"
+              onClick={() => navigate(t.path)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-bg-surface border border-border hover:border-primary/50 text-text-main shadow-2xs hover:shadow-xs transition-all"
+            >
+              {t.icon}
+              {t.label}
+            </button>
+          ))}
         </div>
       )}
     </section>

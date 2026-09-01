@@ -1,7 +1,14 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ToolBentoCard } from './ToolBentoCard';
-import { Scissors, Layers, ArrowUpDown, Minimize2, ArrowRight } from 'lucide-react';
+import {
+  Scissors,
+  Layers,
+  ArrowUpDown,
+  Minimize2,
+  RefreshCw,
+  ArrowRight,
+} from 'lucide-react';
 
 export const ToolBentoGrid: React.FC = () => {
   const navigate = useNavigate();
@@ -27,6 +34,32 @@ export const ToolBentoGrid: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+        <ToolBentoCard
+          title="Convert PDF"
+          badge="PDF ↔ Images"
+          badgeColorClass="text-rose-700 bg-rose-100/80 border-rose-300"
+          icon={<RefreshCw className="h-5 w-5" />}
+          iconBgClass="bg-rose-50 text-rose-600 border-rose-200"
+          description="Convert PDF to JPG, PNG, or TXT."
+          tags={['PDF to JPG', 'Images to PDF', 'Text']}
+          hoverBorderClass="hover:border-rose-500/60"
+          textColorClass="group-hover:text-rose-600"
+          onClick={() => navigate('/convert')}
+        />
+
+        <ToolBentoCard
+          title="Reduce Size & B&W"
+          badge="Compression"
+          badgeColorClass="text-emerald-700 bg-emerald-100/80 border-emerald-300"
+          icon={<Minimize2 className="h-5 w-5" />}
+          iconBgClass="bg-emerald-50 text-emerald-600 border-emerald-200"
+          description="Compress MB size and tune visuals."
+          tags={['MB Sliders', 'B&W Scan', 'Text Weight']}
+          hoverBorderClass="hover:border-emerald-500/60"
+          textColorClass="group-hover:text-emerald-600"
+          onClick={() => navigate('/reduce')}
+        />
+
         <ToolBentoCard
           title="Split PDF"
           badge="1:5, 6:9"
@@ -64,19 +97,6 @@ export const ToolBentoGrid: React.FC = () => {
           hoverBorderClass="hover:border-amber-500/60"
           textColorClass="group-hover:text-amber-600"
           onClick={() => navigate('/reorder')}
-        />
-
-        <ToolBentoCard
-          title="Reduce Size & B&W"
-          badge="Compression"
-          badgeColorClass="text-emerald-700 bg-emerald-100/80 border-emerald-300"
-          icon={<Minimize2 className="h-5 w-5" />}
-          iconBgClass="bg-emerald-50 text-emerald-600 border-emerald-200"
-          description="Compress MB size and tune visuals."
-          tags={['MB Sliders', 'B&W Scan', 'Text Weight']}
-          hoverBorderClass="hover:border-emerald-500/60"
-          textColorClass="group-hover:text-emerald-600"
-          onClick={() => navigate('/reduce')}
         />
       </div>
     </section>

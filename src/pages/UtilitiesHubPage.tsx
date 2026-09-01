@@ -11,6 +11,8 @@ import {
   ArrowUpDown,
   ArrowUpRight,
   Sparkles,
+  RefreshCw,
+  Settings,
 } from 'lucide-react';
 
 export const UtilitiesHubPage: React.FC = () => {
@@ -25,12 +27,21 @@ export const UtilitiesHubPage: React.FC = () => {
 
   const tools = [
     {
+      title: 'Convert PDF',
+      description: 'PDF to JPG, PNG, TXT.',
+      path: '/convert',
+      icon: <RefreshCw className="h-5 w-5 text-rose-500" />,
+      badge: 'New',
+      badgeVariant: 'success' as const,
+      features: ['PDF to Images', 'Images to PDF', 'Text'],
+    },
+    {
       title: 'Reduce PDF Size',
       description: 'Compress MB and tune visuals.',
       path: '/reduce',
       icon: <Minimize2 className="h-5 w-5 text-primary" />,
-      badge: 'New',
-      badgeVariant: 'success' as const,
+      badge: 'Updated',
+      badgeVariant: 'primary' as const,
       features: ['MB Sliders', 'B&W Mode', 'Text Weight'],
     },
     {
@@ -38,8 +49,8 @@ export const UtilitiesHubPage: React.FC = () => {
       description: 'Visual cuts or Python slices.',
       path: '/split',
       icon: <Scissors className="h-5 w-5 text-primary" />,
-      badge: 'Updated',
-      badgeVariant: 'primary' as const,
+      badge: 'Ready',
+      badgeVariant: 'neutral' as const,
       features: ['Slices', 'Cut Points', 'Rotate 90°'],
     },
     {
@@ -47,8 +58,8 @@ export const UtilitiesHubPage: React.FC = () => {
       description: 'Join start, end, or middle.',
       path: '/merge',
       icon: <Layers className="h-5 w-5 text-primary" />,
-      badge: 'Updated',
-      badgeVariant: 'primary' as const,
+      badge: 'Ready',
+      badgeVariant: 'neutral' as const,
       features: ['Middle Insert', 'Flowchart', 'Reorder'],
     },
     {
@@ -59,6 +70,15 @@ export const UtilitiesHubPage: React.FC = () => {
       badge: 'Ready',
       badgeVariant: 'neutral' as const,
       features: ['Move Arrows', 'Drag & Drop', 'Reverse'],
+    },
+    {
+      title: 'Utility Settings',
+      description: 'Preferences and tool defaults.',
+      path: '/settings',
+      icon: <Settings className="h-5 w-5 text-text-sub" />,
+      badge: 'Config',
+      badgeVariant: 'neutral' as const,
+      features: ['In-Memory', 'Local Storage', 'Defaults'],
     },
   ];
 

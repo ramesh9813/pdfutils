@@ -7,6 +7,8 @@ import { SplitPdfPage } from '../pages/SplitPdfPage';
 import { JoinPdfPage } from '../pages/JoinPdfPage';
 import { ReorderPdfPage } from '../pages/ReorderPdfPage';
 import { ReducePdfPage } from '../pages/ReducePdfPage';
+import { ConvertPdfPage } from '../pages/ConvertPdfPage';
+import { SettingsPage } from '../pages/SettingsPage';
 
 export const AppRoutes: React.FC = () => {
   return (
@@ -21,6 +23,8 @@ export const AppRoutes: React.FC = () => {
         <Route path="/reorder" element={<ReorderPdfPage />} />
         <Route path="/reduce" element={<ReducePdfPage />} />
         <Route path="/compress" element={<ReducePdfPage />} />
+        <Route path="/convert" element={<ConvertPdfPage />} />
+        <Route path="/settings" element={<SettingsPage />} />
         <Route path="*" element={<Navigate to="/utils" replace />} />
       </Route>
     </Routes>

@@ -17,7 +17,7 @@
   --color-primary: #0284c7;
   --color-primary-hover: #0369a1;
 
-  /* Semantic Status Colors (Flat solid tones) */
+  /* Semantic Status Colors */
   --color-danger: #ef4444;
   --color-danger-hover: #dc2626;
   --color-success: #10b981;
@@ -26,4 +26,24 @@
   /* Dimensions */
   --height-header: 4rem;
   --height-footer: 3.5rem;
+}
+
+.dark {
+  /* Surfaces & Backgrounds */
+  --color-bg-app: #0b1120;
+  --color-bg-surface: #131d31;
+  --color-bg-subtle: #1e293b;
+
+  /* Borders */
+  --color-border: #293548;
+  --color-border-active: #38bdf8;
+
+  /* Text */
+  --color-text-main: #f1f5f9;
+  --color-text-sub: #94a3b8;
+  --color-text-muted: #64748b;
+
+  /* Primary Action */
+  --color-primary: #38bdf8;
+  --color-primary-hover: #0ea5e9;
 }

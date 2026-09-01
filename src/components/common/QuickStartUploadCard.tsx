@@ -9,6 +9,7 @@ import {
   Scissors,
   Layers,
   ArrowUpDown,
+  RefreshCw,
   X,
 } from 'lucide-react';
 
@@ -96,6 +97,14 @@ export const QuickStartUploadCard: React.FC<QuickStartUploadCardProps> = ({
             >
               <Layers className="h-3.5 w-3.5 text-primary" />
               Merge
+            </button>
+            <button
+              type="button"
+              onClick={() => onNavigate('/convert')}
+              className="px-3 py-1.5 text-xs font-semibold rounded border border-border bg-bg-surface hover:bg-bg-subtle text-text-main transition-colors flex items-center gap-1.5"
+            >
+              <RefreshCw className="h-3.5 w-3.5 text-rose-500" />
+              Convert
             </button>
             <button
               type="button"
