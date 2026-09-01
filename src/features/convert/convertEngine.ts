@@ -2,8 +2,14 @@ import JSZip from 'jszip';
 import { PDFDocument } from 'pdf-lib';
 import { loadPdfDocument } from '../../services/pdfRenderer';
 import { generateDocx, extractTextFromDocx } from './docxGenerator';
-import { convertTextToPdf } from './textToPdf';
-import { extractPdfToText, extractPdfToMarkdown, extractPdfToCsv } from './pdfExtractors';
+import { generateXlsx, extractTableFromXlsx } from './xlsxGenerator';
+import { convertTextToPdf, convertTableToPdf } from './textToPdf';
+import {
+  extractPdfToText,
+  extractPdfToMarkdown,
+  extractPdfToCsv,
+  extractPdfToTableRows,
+} from './pdfExtractors';
 import type { SourceFormat, TargetFormat, ConvertResult } from './convertTypes';
 
 export async function convertPdfToImages(
@@ -81,7 +87,7 @@ export async function executeConversion(
   const file = files[0];
   const baseName = file.name.replace(/\.[^.]+$/, '');
 
-  // 1. Source: Images -> PDF
+  // 1. Source: Images
   if (source === 'images') {
     return convertImagesToPdf(files, onProgress);
   }
@@ -97,6 +103,11 @@ export async function executeConversion(
       const text = await extractPdfToMarkdown(buf, baseName);
       const blob = await generateDocx(text, baseName);
       return { blob, filename: `${baseName}.docx`, count: 1 };
+    }
+    if (target === 'xlsx') {
+      const rows = await extractPdfToTableRows(buf);
+      const blob = await generateXlsx(rows);
+      return { blob, filename: `${baseName}.xlsx`, count: 1 };
     }
     if (target === 'csv') {
       const csv = await extractPdfToCsv(buf);
@@ -126,7 +137,28 @@ export async function executeConversion(
     return { blob, filename: `${baseName}.${ext}`, count: 1 };
   }
 
-  // 4. Source: Text-based (MD, CSV, TXT)
+  // 4. Source: XLSX / CSV
+  if (source === 'xlsx') {
+    let rows: string[][] = [];
+    if (file.name.endsWith('.csv')) {
+      const text = await file.text();
+      rows = text.split('\n').map((l) => l.split(',').map((c) => c.replace(/^"|"$/g, '').trim()));
+    } else {
+      rows = await extractTableFromXlsx(buf);
+    }
+
+    if (target === 'pdf') {
+      const blob = await convertTableToPdf(rows, baseName);
+      return { blob, filename: `${baseName}.pdf`, count: 1 };
+    }
+    const csv = rows.map((r) => r.map((c) => `"${c.replace(/"/g, '""')}"`).join(',')).join('\n');
+    const ext = target === 'md' ? 'md' : 'csv';
+    const mime = target === 'md' ? 'text/markdown' : 'text/csv';
+    const blob = new Blob([csv], { type: `${mime};charset=utf-8` });
+    return { blob, filename: `${baseName}.${ext}`, count: 1 };
+  }
+
+  // 5. Source: MD / TXT
   const rawText = await file.text();
   if (target === 'pdf') {
     const blob = await convertTextToPdf(rawText, baseName);
@@ -135,6 +167,11 @@ export async function executeConversion(
   if (target === 'docx') {
     const blob = await generateDocx(rawText, baseName);
     return { blob, filename: `${baseName}.docx`, count: 1 };
+  }
+  if (target === 'xlsx') {
+    const rows = rawText.split('\n').map((l) => l.split(/[,\t]/).map((c) => c.trim()));
+    const blob = await generateXlsx(rows);
+    return { blob, filename: `${baseName}.xlsx`, count: 1 };
   }
   const ext = target === 'md' ? 'md' : target === 'csv' ? 'csv' : 'txt';
   const mime = target === 'md' ? 'text/markdown' : target === 'csv' ? 'text/csv' : 'text/plain';

@@ -11,17 +11,17 @@ function escapeXml(str: string): string {
 
 export async function generateDocx(text: string, title = 'Document'): Promise<Blob> {
   const zip = new JSZip();
-
   const lines = text.split('\n');
+
   const paragraphsXml = lines
     .map((line) => {
       const trimmed = line.trim();
       if (!trimmed) return '<w:p/>';
       const isHeading = trimmed.startsWith('#');
       const clean = isHeading ? trimmed.replace(/^#+\s*/, '') : trimmed;
-      const sz = isHeading ? '32' : '22';
+      const sz = isHeading ? '30' : '22';
       const bold = isHeading ? '<w:b/>' : '';
-      return `<w:p><w:pPr><w:rPr>${bold}<w:sz w:val="${sz}"/></w:rPr></w:pPr><w:r><w:rPr>${bold}<w:sz w:val="${sz}"/></w:rPr><w:t xml:space="preserve">${escapeXml(clean)}</w:t></w:r></w:p>`;
+      return `<w:p><w:pPr><w:spacing w:after="120"/><w:rPr>${bold}<w:sz w:val="${sz}"/></w:rPr></w:pPr><w:r><w:rPr>${bold}<w:sz w:val="${sz}"/></w:rPr><w:t xml:space="preserve">${escapeXml(clean)}</w:t></w:r></w:p>`;
     })
     .join('');
 
@@ -40,8 +40,12 @@ export async function generateDocx(text: string, title = 'Document'): Promise<Bl
   const documentXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
   <w:body>
-    <w:p><w:pPr><w:rPr><w:b/><w:sz w:val="36"/></w:rPr></w:pPr><w:r><w:rPr><w:b/><w:sz w:val="36"/></w:rPr><w:t>${escapeXml(title)}</w:t></w:r></w:p>
+    <w:p><w:pPr><w:spacing w:after="240"/><w:rPr><w:b/><w:sz w:val="36"/></w:rPr></w:pPr><w:r><w:rPr><w:b/><w:sz w:val="36"/></w:rPr><w:t>${escapeXml(title)}</w:t></w:r></w:p>
     ${paragraphsXml}
+    <w:sectPr>
+      <w:pgSz w:w="11906" w:h="16838"/>
+      <w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440" w:header="720" w:footer="720" w:gutter="0"/>
+    </w:sectPr>
   </w:body>
 </w:document>`;
 

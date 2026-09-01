@@ -46,9 +46,9 @@ export async function extractPdfToMarkdown(fileBuffer: ArrayBuffer, baseName: st
   return md;
 }
 
-export async function extractPdfToCsv(fileBuffer: ArrayBuffer): Promise<string> {
+export async function extractPdfToTableRows(fileBuffer: ArrayBuffer): Promise<string[][]> {
   const doc = await loadPdfDocument(fileBuffer);
-  const rows: string[] = [];
+  const rows: string[][] = [];
 
   for (let i = 1; i <= doc.numPages; i++) {
     const page = await doc.getPage(i);
@@ -61,23 +61,22 @@ export async function extractPdfToCsv(fileBuffer: ArrayBuffer): Promise<string> 
       const y = it.transform ? Math.round(it.transform[5]) : 0;
 
       if (prevY !== 0 && Math.abs(prevY - y) > 4) {
-        if (currentLine.length > 0) {
-          rows.push(currentLine.map((c) => `"${c.replace(/"/g, '""')}"`).join(','));
-        }
+        if (currentLine.length > 0) rows.push(currentLine);
         currentLine = [];
       }
-
-      if (it.str && it.str.trim()) {
-        currentLine.push(it.str.trim());
-      }
+      if (it.str && it.str.trim()) currentLine.push(it.str.trim());
       prevY = y;
     }
-
-    if (currentLine.length > 0) {
-      rows.push(currentLine.map((c) => `"${c.replace(/"/g, '""')}"`).join(','));
-    }
+    if (currentLine.length > 0) rows.push(currentLine);
   }
 
   doc.destroy();
-  return rows.join('\n');
+  return rows.length > 0 ? rows : [['Page', 'Content'], ['1', 'Empty document']];
+}
+
+export async function extractPdfToCsv(fileBuffer: ArrayBuffer): Promise<string> {
+  const rows = await extractPdfToTableRows(fileBuffer);
+  return rows
+    .map((r) => r.map((c) => `"${c.replace(/"/g, '""')}"`).join(','))
+    .join('\n');
 }

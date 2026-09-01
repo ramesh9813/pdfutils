@@ -33,7 +33,7 @@ export const ConvertPage: React.FC = () => {
     if (source === 'docx') {
       return selected.filter((f) => f.name.toLowerCase().endsWith('.docx'));
     }
-    if (source === 'csv') {
+    if (source === 'xlsx') {
       return selected.filter((f) => /\.(csv|xlsx)$/i.test(f.name));
     }
     if (source === 'md') {

@@ -3,6 +3,7 @@ import {
   SourceFormat,
   TargetFormat,
   TARGET_OPTIONS_MAP,
+  FORMAT_LABELS,
 } from './convertTypes';
 import { Card } from '../../components/common/Card';
 import { RefreshCw } from 'lucide-react';
@@ -14,17 +15,6 @@ export interface ConvertFormatSelectorProps {
   onFromChange: (val: SourceFormat) => void;
   onToChange: (val: TargetFormat) => void;
 }
-
-const FORMAT_LABELS: Record<string, string> = {
-  pdf: 'PDF Document (.pdf)',
-  docx: 'Word Document (.docx)',
-  csv: 'Excel / CSV (.csv)',
-  md: 'Markdown (.md)',
-  images: 'Images (.jpg, .png)',
-  jpg: 'JPG Images (.jpg)',
-  png: 'PNG Images (.png)',
-  txt: 'Plain Text (.txt)',
-};
 
 export const ConvertFormatSelector: React.FC<ConvertFormatSelectorProps> = ({
   fromFormat,
@@ -72,7 +62,7 @@ export const ConvertFormatSelector: React.FC<ConvertFormatSelectorProps> = ({
           >
             <option value="pdf">PDF (.pdf)</option>
             <option value="docx">Word (.docx)</option>
-            <option value="csv">Excel / CSV (.csv, .xlsx)</option>
+            <option value="xlsx">Excel / CSV (.xlsx, .csv)</option>
             <option value="md">Markdown (.md)</option>
             <option value="images">Images (.jpg, .png)</option>
             <option value="txt">Plain Text (.txt)</option>
