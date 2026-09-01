@@ -8,17 +8,17 @@ export const Footer: React.FC = () => {
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-1.5 text-text-sub font-medium">
             <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
-            <span>Client-Side Security Guarantee</span>
+            <span>100% Client-Side</span>
           </div>
           <span className="hidden sm:inline text-border">|</span>
           <div className="hidden sm:flex items-center gap-1">
             <Lock className="h-3 w-3" />
-            <span>Zero Server Uploads</span>
+            <span>Zero Uploads</span>
           </div>
           <span className="hidden md:inline text-border">|</span>
           <div className="hidden md:flex items-center gap-1">
             <Cpu className="h-3 w-3" />
-            <span>Hardware-Accelerated Web Workers</span>
+            <span>In-Memory</span>
           </div>
         </div>
 

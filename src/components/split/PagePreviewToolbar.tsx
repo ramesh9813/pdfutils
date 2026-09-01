@@ -66,9 +66,9 @@ export const PagePreviewToolbar: React.FC<PagePreviewToolbarProps> = ({
           </>
         ) : (
           <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold text-text-main flex items-center gap-1.5">
+            <span className="text-xs font-medium text-text-muted flex items-center gap-1">
               <Scissors className="h-3.5 w-3.5 text-primary" />
-              Double-click previews to toggle blue cut points
+              Double-click to cut
             </span>
             {splitPointCount > 0 && (
               <Button
@@ -79,7 +79,7 @@ export const PagePreviewToolbar: React.FC<PagePreviewToolbarProps> = ({
                 disabled={disabled}
                 leftIcon={<RotateCcw className="h-3 w-3" />}
               >
-                Clear All Splits ({splitPointCount})
+                Clear Cuts ({splitPointCount})
               </Button>
             )}
           </div>
@@ -94,7 +94,7 @@ export const PagePreviewToolbar: React.FC<PagePreviewToolbarProps> = ({
             disabled={disabled}
             leftIcon={<GripVertical className="h-3 w-3 text-amber-600" />}
           >
-            Reset Sequence
+            Reset Order
           </Button>
         )}
       </div>

@@ -30,7 +30,7 @@ export const ReorderToolbar: React.FC<ReorderToolbarProps> = ({
           disabled={isProcessing || pageCount < 2}
           leftIcon={<ArrowUpDown className="h-3.5 w-3.5" />}
         >
-          Reverse Order
+          Reverse
         </Button>
 
         <Button
@@ -41,13 +41,13 @@ export const ReorderToolbar: React.FC<ReorderToolbarProps> = ({
           disabled={isProcessing || !isModified}
           leftIcon={<RotateCcw className="h-3.5 w-3.5 text-amber-600" />}
         >
-          Reset to Original
+          Reset
         </Button>
       </div>
 
       <div className="flex items-center gap-3">
         <span className="text-xs text-text-muted">
-          {pageCount} Pages {isModified ? '(Sequence Modified)' : '(Default Sequence)'}
+          {pageCount} Pages {isModified ? '(Modified)' : ''}
         </span>
 
         <Button
@@ -64,7 +64,7 @@ export const ReorderToolbar: React.FC<ReorderToolbarProps> = ({
             )
           }
         >
-          {isProcessing ? 'Saving...' : 'Download Reordered PDF'}
+          {isProcessing ? 'Saving...' : 'Download PDF'}
         </Button>
       </div>
     </div>

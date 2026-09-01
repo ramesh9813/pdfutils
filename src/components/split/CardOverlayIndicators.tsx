@@ -31,12 +31,12 @@ export const CardOverlayIndicators: React.FC<CardOverlayIndicatorsProps> = ({
       {/* Attached to hold badge */}
       {isHeld && (
         <div className="absolute inset-0 bg-amber-500/20 border-2 border-dashed border-amber-500 z-30 flex flex-col items-center justify-center p-2 text-center pointer-events-none animate-pulse">
-          <span className="bg-amber-600 text-white text-[11px] font-bold px-2 py-1 rounded shadow flex items-center gap-1">
-            <Hand className="h-3.5 w-3.5" />
-            Attached to Hold
+          <span className="bg-amber-600 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow flex items-center gap-1">
+            <Hand className="h-3 w-3" />
+            Holding Page
           </span>
           <span className="text-[10px] text-amber-900 font-semibold mt-1 bg-white/80 px-1.5 py-0.5 rounded">
-            Click another page to drop here
+            Click target to drop
           </span>
         </div>
       )}
@@ -45,20 +45,20 @@ export const CardOverlayIndicators: React.FC<CardOverlayIndicatorsProps> = ({
       {isSplitPoint && (
         <div className="absolute inset-0 bg-blue-600/35 backdrop-blur-[0.5px] z-20 flex flex-col items-center justify-between p-2 pointer-events-none transition-all">
           <div className="w-full flex justify-end">
-            <span className="bg-blue-600 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-sm flex items-center gap-1">
-              <Scissors className="h-3 w-3" />
-              Split Point #{splitIndex + 1}
+            <span className="bg-blue-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded shadow-sm flex items-center gap-1">
+              <Scissors className="h-2.5 w-2.5" />
+              Cut #{splitIndex + 1}
             </span>
           </div>
 
-          <div className="bg-blue-700/90 text-white text-[11px] font-bold px-2.5 py-1 rounded-md shadow-md flex items-center gap-1.5">
-            <Scissors className="h-3.5 w-3.5" />
-            <span>Cut After Page {pageNumber}</span>
+          <div className="bg-blue-700/90 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-md flex items-center gap-1">
+            <Scissors className="h-3 w-3" />
+            <span>Cut after p.{pageNumber}</span>
           </div>
 
           <div className="w-full flex justify-center">
-            <span className="bg-white/95 text-blue-800 text-[9px] font-mono font-semibold px-1.5 py-0.5 rounded shadow-xs border border-blue-200">
-              Part {splitIndex + 1} ends here
+            <span className="bg-white/95 text-blue-800 text-[9px] font-mono font-semibold px-1 py-0.5 rounded shadow-xs border border-blue-200">
+              Part {splitIndex + 1}
             </span>
           </div>
         </div>

@@ -33,11 +33,11 @@ export const QuickStartUploadCard: React.FC<QuickStartUploadCardProps> = ({
             <FileText className="h-4 w-4" />
           </div>
           <div>
-            <h2 className="text-sm sm:text-base font-bold text-text-main">
-              Quick Start PDF Upload
+            <h2 className="text-sm font-bold text-text-main">
+              Quick Start Upload
             </h2>
             <p className="text-xs text-text-muted">
-              Upload your PDF once here, then select any tool below to process it immediately.
+              Drop PDF to process across any tool.
             </p>
           </div>
         </div>
@@ -51,23 +51,23 @@ export const QuickStartUploadCard: React.FC<QuickStartUploadCardProps> = ({
       {!sharedFile ? (
         <Dropzone
           multiple={false}
-          title="Drop PDF File Here to Use in Any Tool"
-          subtitle="Uploaded PDF will automatically carry over to Reduce, Split, Merge, or Reorder."
+          title="Drop PDF to begin"
+          subtitle="Auto-loads into Reduce, Split, Merge, or Reorder."
           onFilesSelected={onUpload}
-          className="py-6 bg-white/60"
+          className="py-5 bg-white/60"
         />
       ) : (
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-lg bg-white border border-sky-300 shadow-xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-3.5 rounded-lg bg-white border border-sky-300 shadow-xs">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
-              <CheckCircle2 className="h-5 w-5" />
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
+              <CheckCircle2 className="h-4 w-4" />
             </div>
             <div className="flex flex-col">
-              <span className="text-xs sm:text-sm font-bold text-text-main truncate max-w-sm">
+              <span className="text-xs font-bold text-text-main truncate max-w-sm">
                 {sharedFile.name}
               </span>
-              <span className="text-xs text-text-muted">
-                Ready to process • {(sharedFile.size / (1024 * 1024)).toFixed(2)} MB
+              <span className="text-[11px] text-text-muted">
+                Ready • {(sharedFile.size / (1024 * 1024)).toFixed(2)} MB
               </span>
             </div>
           </div>

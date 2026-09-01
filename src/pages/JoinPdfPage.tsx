@@ -51,10 +51,10 @@ export const JoinPdfPage: React.FC = () => {
         <div>
           <h1 className="text-xl sm:text-2xl font-bold text-text-main flex items-center gap-2">
             <Layers className="h-6 w-6 text-primary" />
-            Merge PDF Documents
+            Merge PDFs
           </h1>
-          <p className="text-xs sm:text-sm text-text-sub mt-0.5">
-            Combine multiple PDF files into one clean, continuous document in your chosen order.
+          <p className="text-xs text-text-sub mt-0.5">
+            Combine PDFs at start, end, or inside pages.
           </p>
         </div>
       </div>
@@ -66,16 +66,15 @@ export const JoinPdfPage: React.FC = () => {
 
       {/* Completion Download Card */}
       {result && (
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 rounded border border-emerald-300 bg-emerald-50 p-4 text-emerald-900">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 rounded border border-emerald-300 bg-emerald-50 p-3.5 text-emerald-900">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-white">
-              <CheckCircle2 className="h-5 w-5" />
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-white">
+              <CheckCircle2 className="h-4 w-4" />
             </div>
             <div>
-              <h3 className="text-sm font-bold">Merge Completed Successfully!</h3>
-              <p className="text-xs text-emerald-800">
-                Merged <strong>{result.totalFiles}</strong> documents into a single document containing{' '}
-                <strong>{result.totalPages}</strong> pages.
+              <h3 className="text-xs sm:text-sm font-bold">Merged!</h3>
+              <p className="text-[11px] text-emerald-800">
+                {result.totalFiles} files ➔ <strong>{result.totalPages} pages</strong>
               </p>
             </div>
           </div>
@@ -84,12 +83,12 @@ export const JoinPdfPage: React.FC = () => {
             <Button
               type="button"
               variant="primary"
-              size="md"
+              size="sm"
               onClick={downloadResult}
-              leftIcon={<Download className="h-4 w-4" />}
+              leftIcon={<Download className="h-3.5 w-3.5" />}
               className="w-full sm:w-auto"
             >
-              Download Merged PDF
+              Download ({result.totalPages} pp)
             </Button>
           </div>
         </div>
@@ -100,8 +99,8 @@ export const JoinPdfPage: React.FC = () => {
         <div className="max-w-2xl mx-auto w-full py-8">
           <Dropzone
             multiple
-            title="Drag & Drop PDF Files Here to Merge"
-            subtitle="Select two or more PDF documents. Files are processed 100% locally in your browser memory."
+            title="Drop PDFs to Merge"
+            subtitle="100% in-browser processing."
             onFilesSelected={handleFilesSelected}
           />
         </div>

@@ -36,10 +36,10 @@ export const RangeSliceConfig: React.FC<RangeSliceConfigProps> = ({
       <div className="flex flex-wrap items-center justify-between gap-1">
         <label className="font-semibold text-text-main flex items-center gap-1.5 text-xs" htmlFor="range-input">
           <Scissors className="h-3.5 w-3.5 text-primary" />
-          <span>Python Slicing & Visual Cut Points:</span>
+          <span>Python Slices:</span>
         </label>
         <span className="text-[11px] font-mono text-primary font-semibold">
-          {splitPoints.length} Split Point(s) = {ranges.length} Section(s)
+          {splitPoints.length} Cuts • {ranges.length} Parts
         </span>
       </div>
 
@@ -49,7 +49,7 @@ export const RangeSliceConfig: React.FC<RangeSliceConfigProps> = ({
         value={customRanges}
         onChange={(e) => onSetCustomRanges(e.target.value)}
         disabled={disabled}
-        placeholder="e.g. 1:5, 6:9, 10:50, 51:67"
+        placeholder="1:5, 6:9, 10:50"
         className={`w-full rounded border px-3 py-2 text-xs font-mono bg-bg-surface text-text-main outline-none focus:border-primary ${
           !rangeValidation.valid ? 'border-danger' : 'border-border'
         }`}
@@ -59,7 +59,7 @@ export const RangeSliceConfig: React.FC<RangeSliceConfigProps> = ({
         <p className="text-[11px] text-danger">{rangeValidation.error}</p>
       ) : (
         <p className="text-[11px] text-text-muted">
-          Python-based indexing: <code className="bg-bg-subtle px-1 py-0.5 rounded text-primary font-semibold">1:5</code> extracts pages 1 to 5, <code className="bg-bg-subtle px-1 py-0.5 rounded text-primary font-semibold">6:9</code> extracts pages 6 to 9.
+          Format: <code className="bg-bg-subtle px-1 py-0.5 rounded text-primary font-semibold">1:5, 6:9</code> (start:end)
         </p>
       )}
 
@@ -71,7 +71,7 @@ export const RangeSliceConfig: React.FC<RangeSliceConfigProps> = ({
           disabled={disabled}
           className="px-2 py-0.5 rounded border border-border bg-bg-surface hover:bg-border text-text-sub text-[11px] font-mono"
         >
-          Halves (1:{Math.ceil(totalPages / 2)}, {Math.ceil(totalPages / 2) + 1}:{totalPages})
+          Halves
         </button>
         <button
           type="button"
@@ -79,16 +79,16 @@ export const RangeSliceConfig: React.FC<RangeSliceConfigProps> = ({
           disabled={disabled}
           className="px-2 py-0.5 rounded border border-border bg-bg-surface hover:bg-border text-text-sub text-[11px] font-mono"
         >
-          Full Document (1:{totalPages})
+          Full (1:{totalPages})
         </button>
       </div>
 
       {/* Selective Download Checkboxes for Split Sections */}
       {ranges.length > 0 && (
-        <div className="flex flex-col gap-2 rounded border border-border/80 bg-bg-subtle/40 p-3 mt-1">
+        <div className="flex flex-col gap-2 rounded border border-border/80 bg-bg-subtle/40 p-2.5 mt-1">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-text-main">
-              Choose Sections to Keep / Download:
+              Keep Sections:
             </span>
             <div className="flex items-center gap-2">
               <button
@@ -96,7 +96,7 @@ export const RangeSliceConfig: React.FC<RangeSliceConfigProps> = ({
                 onClick={() => onSelectAllSections(ranges.length)}
                 className="text-[11px] text-primary hover:underline font-medium"
               >
-                Keep All ({ranges.length})
+                All ({ranges.length})
               </button>
               <span className="text-text-muted">•</span>
               <button

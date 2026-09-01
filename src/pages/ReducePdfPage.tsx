@@ -67,10 +67,10 @@ export const ReducePdfPage: React.FC = () => {
         <div>
           <h1 className="text-xl sm:text-2xl font-bold text-text-main flex items-center gap-2">
             <Minimize2 className="h-6 w-6 text-primary" />
-            Reduce PDF File Size
+            Reduce PDF Size
           </h1>
-          <p className="text-xs sm:text-sm text-text-sub mt-0.5">
-            Optimize and reduce PDF size by adjusting visual quality percentage and target MB limit.
+          <p className="text-xs text-text-sub mt-0.5">
+            Compress MB size with quality and target size sliders.
           </p>
         </div>
 
@@ -83,7 +83,7 @@ export const ReducePdfPage: React.FC = () => {
             disabled={isProcessing}
             leftIcon={<RotateCcw className="h-3.5 w-3.5" />}
           >
-            Upload Different PDF
+            New PDF
           </Button>
         )}
       </div>
@@ -93,8 +93,8 @@ export const ReducePdfPage: React.FC = () => {
         <div className="py-8">
           <Dropzone
             multiple={false}
-            title="Drag & Drop PDF File Here to Reduce Size"
-            subtitle="Client-side optimization. Images and pages are compressed in-browser memory."
+            title="Drop PDF to Reduce Size"
+            subtitle="In-memory client-side compression."
             onFilesSelected={handleFilesSelected}
           />
         </div>
@@ -136,19 +136,17 @@ export const ReducePdfPage: React.FC = () => {
 
           {/* Completion Card */}
           {result && (
-            <Card className="flex flex-col sm:flex-row items-center justify-between gap-4 p-5 bg-emerald-50 border border-emerald-300">
+            <Card className="flex flex-col sm:flex-row items-center justify-between gap-3 p-4 bg-emerald-50 border border-emerald-300">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-white">
-                  <CheckCircle2 className="h-5 w-5" />
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-white">
+                  <CheckCircle2 className="h-4 w-4" />
                 </div>
                 <div>
-                  <h4 className="text-sm font-bold text-emerald-950">
-                    PDF Reduced Successfully! ({result.percentSaved}% Saved)
+                  <h4 className="text-xs sm:text-sm font-bold text-emerald-950">
+                    Reduced! ({result.percentSaved}% Saved)
                   </h4>
-                  <p className="text-xs text-emerald-800 mt-0.5">
-                    Original: {(result.originalSize / (1024 * 1024)).toFixed(2)} MB ➔ Reduced:{' '}
-                    <strong>{(result.reducedSize / (1024 * 1024)).toFixed(2)} MB</strong> across{' '}
-                    {result.pageCount} page(s).
+                  <p className="text-[11px] text-emerald-800">
+                    {(result.originalSize / (1024 * 1024)).toFixed(2)} MB ➔ <strong>{(result.reducedSize / (1024 * 1024)).toFixed(2)} MB</strong> ({result.pageCount} pp)
                   </p>
                 </div>
               </div>
@@ -156,12 +154,12 @@ export const ReducePdfPage: React.FC = () => {
               <Button
                 type="button"
                 variant="primary"
-                size="lg"
+                size="sm"
                 onClick={() => downloadResult(activeFile.name)}
-                leftIcon={<Download className="h-4 w-4" />}
+                leftIcon={<Download className="h-3.5 w-3.5" />}
                 className="bg-emerald-600 hover:bg-emerald-700 border-emerald-600 w-full sm:w-auto"
               >
-                Download Reduced PDF
+                Download ({(result.reducedSize / (1024 * 1024)).toFixed(2)} MB)
               </Button>
             </Card>
           )}
@@ -171,7 +169,7 @@ export const ReducePdfPage: React.FC = () => {
             <Button
               type="button"
               variant="primary"
-              size="lg"
+              size="md"
               onClick={handleExecute}
               disabled={isProcessing || !fileBuffer}
               leftIcon={
@@ -181,11 +179,11 @@ export const ReducePdfPage: React.FC = () => {
                   <Sparkles className="h-4 w-4" />
                 )
               }
-              className="w-full py-3 text-base font-semibold"
+              className="w-full py-2.5 text-xs font-semibold"
             >
               {isProcessing
-                ? `Reducing PDF Size... (${progress.current}%)`
-                : `Reduce Size to ~${targetMb.toFixed(2)} MB (${qualityPercent}% Quality)`}
+                ? `Reducing... (${progress.current}%)`
+                : `Reduce to ~${targetMb.toFixed(2)} MB (${qualityPercent}%)`}
             </Button>
           )}
         </div>

@@ -31,15 +31,15 @@ export const SplitSummaryAndAction: React.FC<SplitSummaryAndActionProps> = ({
     <div className="flex flex-col gap-4 border-t border-border pt-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex-1 min-w-0">
-          <span className="text-xs font-semibold text-text-sub block mb-1">
-            Output Plan Summary:
+          <span className="text-[11px] font-semibold text-text-sub block mb-0.5">
+            Plan:
           </span>
           <p className="text-xs text-text-main font-medium">{summaryText}</p>
         </div>
 
-        <div className="w-full sm:w-60">
-          <label className="text-[11px] font-semibold text-text-muted mb-1 block" htmlFor="prefix-input">
-            Output File Prefix:
+        <div className="w-full sm:w-52">
+          <label className="text-[11px] font-semibold text-text-muted mb-0.5 block" htmlFor="prefix-input">
+            File Prefix:
           </label>
           <input
             id="prefix-input"
@@ -48,7 +48,7 @@ export const SplitSummaryAndAction: React.FC<SplitSummaryAndActionProps> = ({
             onChange={(e) => onSetFilenamePrefix(e.target.value)}
             disabled={isProcessing}
             placeholder="document"
-            className="w-full rounded border border-border px-2.5 py-1.5 text-xs bg-bg-surface text-text-main outline-none focus:border-primary font-mono"
+            className="w-full rounded border border-border px-2.5 py-1 text-xs bg-bg-surface text-text-main outline-none focus:border-primary font-mono"
           />
         </div>
       </div>
@@ -56,10 +56,10 @@ export const SplitSummaryAndAction: React.FC<SplitSummaryAndActionProps> = ({
       {progress.status !== 'idle' && <ProgressBar progress={progress} />}
 
       {result && (
-        <div className="flex items-center justify-between gap-3 p-3.5 rounded bg-emerald-50 border border-emerald-300">
+        <div className="flex items-center justify-between gap-3 p-3 rounded bg-emerald-50 border border-emerald-300">
           <div className="flex items-center gap-2 text-xs font-bold text-emerald-900">
             <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
-            <span>Splitting Completed! ({result.fileCount} PDF part(s) generated)</span>
+            <span>Done! ({result.fileCount} parts)</span>
           </div>
           <Button
             type="button"
@@ -69,7 +69,7 @@ export const SplitSummaryAndAction: React.FC<SplitSummaryAndActionProps> = ({
             leftIcon={<Download className="h-3.5 w-3.5" />}
             className="bg-emerald-600 hover:bg-emerald-700"
           >
-            Download ({result.isZip ? '.ZIP Archive' : '.PDF'})
+            Download ({result.isZip ? 'ZIP' : 'PDF'})
           </Button>
         </div>
       )}
@@ -78,7 +78,7 @@ export const SplitSummaryAndAction: React.FC<SplitSummaryAndActionProps> = ({
         <Button
           type="button"
           variant="primary"
-          size="lg"
+          size="md"
           onClick={onExecuteSplit}
           disabled={!canExecute || isProcessing}
           leftIcon={
@@ -88,11 +88,11 @@ export const SplitSummaryAndAction: React.FC<SplitSummaryAndActionProps> = ({
               <Scissors className="h-4 w-4" />
             )
           }
-          className="w-full py-3 text-sm font-bold"
+          className="w-full py-2.5 text-xs font-bold"
         >
           {isProcessing
-            ? `Splitting PDF... (${progress.current} of ${progress.total})`
-            : 'Execute Split & Download'}
+            ? `Splitting... (${progress.current}/${progress.total})`
+            : 'Split PDF'}
         </Button>
       )}
     </div>

@@ -16,26 +16,26 @@ export const SplitModeSelector: React.FC<SplitModeSelectorProps> = ({
   const modes: { id: SplitMode; label: string; desc: string; icon: React.ReactNode }[] = [
     {
       id: 'range',
-      label: 'Python Slices / Cut Points',
-      desc: 'e.g. 1:5, 6:9, 10:50',
+      label: 'Python Slices',
+      desc: '1:5, 6:9, 10:50',
       icon: <Scissors className="h-4 w-4" />,
     },
     {
       id: 'extract',
-      label: 'Extract Selected',
-      desc: 'Pick individual pages',
+      label: 'Extract Pages',
+      desc: 'Pick pages',
       icon: <Bookmark className="h-4 w-4" />,
     },
     {
       id: 'single',
       label: 'Single Pages',
-      desc: 'All pages as separate PDFs',
+      desc: '1 page per file',
       icon: <FileSpreadsheet className="h-4 w-4" />,
     },
     {
       id: 'every_n',
       label: 'Every N Pages',
-      desc: 'Fixed interval chunks',
+      desc: 'Fixed intervals',
       icon: <Layers className="h-4 w-4" />,
     },
   ];

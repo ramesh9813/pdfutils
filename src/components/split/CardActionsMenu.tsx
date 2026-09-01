@@ -73,7 +73,7 @@ export const CardActionsMenu: React.FC<CardActionsMenuProps> = ({
                 className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-text-main hover:bg-bg-subtle"
               >
                 <Scissors className="h-3.5 w-3.5 text-primary" />
-                <span>{isSplitPoint ? 'Remove Cut Point' : 'Cut / Split After This Page'}</span>
+                <span>{isSplitPoint ? 'Remove Cut' : 'Cut After Page'}</span>
               </button>
             )}
 
@@ -87,7 +87,7 @@ export const CardActionsMenu: React.FC<CardActionsMenuProps> = ({
                 className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-text-main hover:bg-bg-subtle"
               >
                 <Move className="h-3.5 w-3.5 text-amber-600" />
-                <span>Pick up to Reposition</span>
+                <span>Pick Up Page</span>
               </button>
             )}
 
@@ -101,7 +101,7 @@ export const CardActionsMenu: React.FC<CardActionsMenuProps> = ({
                 className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-text-main hover:bg-bg-subtle"
               >
                 <ArrowLeft className="h-3.5 w-3.5" />
-                <span>Move Left (Page {pageNumber - 1})</span>
+                <span>Move Left</span>
               </button>
             )}
 
@@ -115,7 +115,7 @@ export const CardActionsMenu: React.FC<CardActionsMenuProps> = ({
                 className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-text-main hover:bg-bg-subtle"
               >
                 <ArrowRight className="h-3.5 w-3.5" />
-                <span>Move Right (Page {pageNumber + 1})</span>
+                <span>Move Right</span>
               </button>
             )}
 
@@ -126,7 +126,7 @@ export const CardActionsMenu: React.FC<CardActionsMenuProps> = ({
                 className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-text-main hover:bg-bg-subtle border-t border-border"
               >
                 <Move className="h-3.5 w-3.5 text-text-sub" />
-                <span>Move to Exact Position...</span>
+                <span>Move to Position...</span>
               </button>
             )}
 
@@ -140,7 +140,7 @@ export const CardActionsMenu: React.FC<CardActionsMenuProps> = ({
                 className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-text-main hover:bg-bg-subtle border-t border-border"
               >
                 <FileDown className="h-3.5 w-3.5 text-text-sub" />
-                <span>Extract Just This Page</span>
+                <span>Extract Page</span>
               </button>
             )}
           </div>

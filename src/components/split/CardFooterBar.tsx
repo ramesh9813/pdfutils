@@ -37,7 +37,7 @@ export const CardFooterBar: React.FC<CardFooterBarProps> = ({
           e.stopPropagation();
           onPreviewFull?.(page);
         }}
-        title="Preview Full Page"
+        title="Full Preview"
         className="p-1 rounded text-text-muted hover:text-text-main hover:bg-bg-subtle text-[11px]"
       >
         <Maximize2 className="h-3.5 w-3.5" />
@@ -47,7 +47,7 @@ export const CardFooterBar: React.FC<CardFooterBarProps> = ({
         type="button"
         onClick={handleDownload}
         disabled={isDownloading || !sourceBuffer}
-        title="Download single page as rotated PDF"
+        title="Download Page"
         className="flex items-center gap-1 px-2 py-1 rounded bg-bg-subtle hover:bg-primary hover:text-white text-text-main border border-border text-[11px] font-semibold transition-colors shadow-2xs"
       >
         <Download className="h-3 w-3" />

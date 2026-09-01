@@ -15,16 +15,16 @@ export const AssemblySequencePreview: React.FC<AssemblySequencePreviewProps> = (
   if (mergePlan.length < 2) return null;
 
   return (
-    <Card className="flex flex-col gap-3 p-4 bg-sky-50/50 border border-sky-200 shadow-xs animate-fadeIn">
+    <Card className="flex flex-col gap-2 p-3 bg-sky-50/50 border border-sky-200 shadow-xs animate-fadeIn">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Split className="h-4 w-4 text-primary shrink-0" />
+        <div className="flex items-center gap-1.5">
+          <Split className="h-3.5 w-3.5 text-primary shrink-0" />
           <span className="text-xs font-bold text-text-main">
-            Assembly Sequence Flow (Including Middle/Inside Insertions)
+            Sequence Flow:
           </span>
         </div>
-        <span className="text-xs font-mono font-bold text-primary bg-sky-100 px-2 py-0.5 rounded border border-sky-300">
-          Total {totalEstimatedPages} Pages
+        <span className="text-[11px] font-mono font-bold text-primary bg-sky-100 px-1.5 py-0.5 rounded border border-sky-300">
+          {totalEstimatedPages} pp
         </span>
       </div>
 

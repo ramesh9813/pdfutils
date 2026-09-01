@@ -96,16 +96,16 @@ export const SplitPdfPage: React.FC = () => {
         <div>
           <h1 className="text-xl sm:text-2xl font-bold text-text-main flex items-center gap-2">
             <Scissors className="h-6 w-6 text-primary" />
-            Split PDF Document
+            Split PDF
           </h1>
-          <p className="text-xs sm:text-sm text-text-sub mt-0.5">
-            Configure splitting at top, inspect live page previews below, or double-click to set blue cut points.
+          <p className="text-xs text-text-sub mt-0.5">
+            Configure split at top; double-click pages below to cut.
           </p>
         </div>
 
         {docInfo && (
           <Button type="button" variant="outline" size="sm" onClick={handleResetAll} disabled={isProcessing} leftIcon={<RotateCcw className="h-3.5 w-3.5" />}>
-            Upload Different PDF
+            New PDF
           </Button>
         )}
       </div>
@@ -122,8 +122,8 @@ export const SplitPdfPage: React.FC = () => {
           <Dropzone
             onFilesSelected={handleFilesSelected}
             multiple={false}
-            title="Drag & Drop PDF File Here to Split"
-            subtitle="Secure client-side processing in your browser memory."
+            title="Drop PDF to Split"
+            subtitle="100% private in-memory processing."
           />
         </div>
       )}
@@ -165,8 +165,8 @@ export const SplitPdfPage: React.FC = () => {
           </div>
 
           <div className="flex flex-col gap-3 pt-2">
-            <h3 className="text-base font-bold text-text-main">
-              Document Pages Preview ({pages.length})
+            <h3 className="text-sm font-bold text-text-main">
+              Page Previews ({pages.length})
             </h3>
             <PagePreviewGrid
               pages={pages}

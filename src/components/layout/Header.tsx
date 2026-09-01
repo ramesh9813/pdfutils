@@ -102,18 +102,18 @@ export const Header: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="hidden sm:flex items-center gap-1.5 rounded border border-border bg-bg-subtle px-2.5 py-1 text-xs font-medium text-text-sub">
-            <ShieldCheck className="h-4 w-4 text-emerald-600" />
-            <span>100% Private • Local Processing</span>
+          <div className="hidden sm:flex items-center gap-1.5 rounded border border-border bg-bg-subtle px-2 py-1 text-xs font-medium text-text-sub">
+            <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
+            <span>100% Private</span>
           </div>
 
           <div className="flex md:hidden items-center gap-1">
             <NavLink
-              to="/hub"
+              to="/utils"
               className={({ isActive }) =>
                 `p-2 rounded text-sm ${isActive ? 'bg-bg-subtle text-primary' : 'text-text-sub'}`
               }
-              title="Utilities Hub"
+              title="Utils"
             >
               <LayoutGrid className="h-4 w-4" />
             </NavLink>
@@ -122,7 +122,7 @@ export const Header: React.FC = () => {
               className={({ isActive }) =>
                 `p-2 rounded text-sm ${isActive ? 'bg-bg-subtle text-primary' : 'text-text-sub'}`
               }
-              title="Split PDF"
+              title="Split"
             >
               <Scissors className="h-4 w-4" />
             </NavLink>
@@ -131,7 +131,7 @@ export const Header: React.FC = () => {
               className={({ isActive }) =>
                 `p-2 rounded text-sm ${isActive ? 'bg-bg-subtle text-primary' : 'text-text-sub'}`
               }
-              title="Merge PDF"
+              title="Merge"
             >
               <Layers className="h-4 w-4" />
             </NavLink>

@@ -15,8 +15,8 @@ export interface DropzoneProps {
 export const Dropzone: React.FC<DropzoneProps> = ({
   onFilesSelected,
   multiple = false,
-  title = 'Drag & drop your PDF file here',
-  subtitle = 'Supports PDF documents of any size. Processing happens 100% locally.',
+  title = 'Drop PDF here',
+  subtitle = '100% in-browser processing.',
   accept = 'application/pdf',
   disabled = false,
   className = '',
@@ -66,7 +66,7 @@ export const Dropzone: React.FC<DropzoneProps> = ({
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
       onClick={handleClick}
-      className={`group relative flex flex-col items-center justify-center rounded border-2 border-dashed p-8 text-center transition-colors cursor-pointer ${
+      className={`group relative flex flex-col items-center justify-center rounded border-2 border-dashed p-6 text-center transition-colors cursor-pointer ${
         isDragOver
           ? 'border-primary bg-sky-50/50'
           : 'border-border bg-bg-surface hover:border-primary/60 hover:bg-bg-subtle/50'
@@ -82,25 +82,25 @@ export const Dropzone: React.FC<DropzoneProps> = ({
         className="hidden"
       />
 
-      <div className="mb-4 flex h-14 w-14 items-center justify-center rounded border border-border bg-bg-subtle text-primary group-hover:border-primary/40 group-hover:scale-105 transition-transform">
-        <UploadCloud className="h-7 w-7" />
+      <div className="mb-3 flex h-11 w-11 items-center justify-center rounded border border-border bg-bg-subtle text-primary group-hover:border-primary/40 group-hover:scale-105 transition-transform">
+        <UploadCloud className="h-6 w-6" />
       </div>
 
-      <h3 className="text-base font-semibold text-text-main mb-1">{title}</h3>
-      <p className="max-w-md text-xs text-text-muted mb-4">{subtitle}</p>
+      <h3 className="text-sm font-semibold text-text-main mb-0.5">{title}</h3>
+      <p className="max-w-md text-xs text-text-muted mb-3">{subtitle}</p>
 
       <Button
         type="button"
         variant="secondary"
         size="sm"
-        leftIcon={<FileText className="h-3.5 w-3.5" />}
+        leftIcon={<FileText className="h-3 w-3" />}
         onClick={(e) => {
           e.stopPropagation();
           handleClick();
         }}
         disabled={disabled}
       >
-        {multiple ? 'Select PDF Files' : 'Select PDF File'}
+        {multiple ? 'Browse PDFs' : 'Browse PDF'}
       </Button>
     </div>
   );

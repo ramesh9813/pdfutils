@@ -80,10 +80,10 @@ export const ReorderPdfPage: React.FC = () => {
         <div>
           <h1 className="text-xl sm:text-2xl font-bold text-text-main flex items-center gap-2">
             <ArrowUpDown className="h-6 w-6 text-primary" />
-            Reorder PDF Pages
+            Reorder Pages
           </h1>
-          <p className="text-xs sm:text-sm text-text-sub mt-0.5">
-            Hold any page for ~1.2s to pick up and drop at a new position, or use toolbar controls.
+          <p className="text-xs text-text-sub mt-0.5">
+            Hold to pick up and drag pages, or use toolbar.
           </p>
         </div>
 
@@ -96,7 +96,7 @@ export const ReorderPdfPage: React.FC = () => {
             disabled={isSaving}
             leftIcon={<RotateCcw className="h-3.5 w-3.5" />}
           >
-            Upload Different PDF
+            New PDF
           </Button>
         )}
       </div>
@@ -106,8 +106,8 @@ export const ReorderPdfPage: React.FC = () => {
         <div className="max-w-2xl mx-auto w-full py-8">
           <Dropzone
             multiple={false}
-            title="Drag & Drop PDF File Here to Reorder Pages"
-            subtitle="Restructure page order seamlessly in your browser."
+            title="Drop PDF to Reorder"
+            subtitle="100% in-browser processing."
             onFilesSelected={handleFilesSelected}
           />
         </div>

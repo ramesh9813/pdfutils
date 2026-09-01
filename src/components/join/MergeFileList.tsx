@@ -74,13 +74,13 @@ export const MergeFileList: React.FC<MergeFileListProps> = ({
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded border border-border bg-bg-surface p-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded border border-border bg-bg-surface p-3 sm:px-4">
         <div>
-          <h3 className="text-base font-bold text-text-main">
-            Merge Document Queue ({items.length})
+          <h3 className="text-sm font-bold text-text-main">
+            Queue ({items.length})
           </h3>
-          <p className="text-xs text-text-muted mt-0.5">
-            Total estimated pages: <strong className="text-text-main">{totalEstimatedPages}</strong>. Drag items or use arrows to adjust sequence.
+          <p className="text-xs text-text-muted">
+            {totalEstimatedPages} pages estimated. Drag to reorder.
           </p>
         </div>
 
@@ -99,10 +99,10 @@ export const MergeFileList: React.FC<MergeFileListProps> = ({
             }}
           />
           <Button type="button" variant="secondary" size="sm" onClick={() => fileInputRef.current?.click()} disabled={isProcessing} leftIcon={<Plus className="h-3.5 w-3.5" />}>
-            Add More
+            Add Files
           </Button>
           <Button type="button" variant="outline" size="sm" onClick={onClearItems} disabled={isProcessing || items.length === 0} leftIcon={<Trash2 className="h-3.5 w-3.5" />}>
-            Clear All
+            Clear
           </Button>
         </div>
       </div>
@@ -133,41 +133,41 @@ export const MergeFileList: React.FC<MergeFileListProps> = ({
 
       <Dropzone
         multiple
-        title="Add more files to queue"
-        subtitle="Drag additional PDF documents here to append them to the merge queue."
+        title="Add more PDFs"
+        subtitle="Append files to merge queue."
         onFilesSelected={onAddFiles}
         disabled={isProcessing}
-        className="py-4"
+        className="py-3"
       />
 
-      <Card className="flex flex-col gap-4">
+      <Card className="flex flex-col gap-3 p-4">
         <div>
           <label className="text-xs font-semibold text-text-main mb-1 block" htmlFor="merged-name">
-            Merged Output File Name:
+            Output File Name:
           </label>
           <input
             id="merged-name"
             type="text"
             value={options.outputFilename}
             onChange={(e) => onSetOutputFilename(e.target.value)}
-            placeholder="merged-documents.pdf"
-            className="w-full rounded border border-border px-3 py-2 text-xs bg-bg-surface text-text-main outline-none focus:border-primary font-medium"
+            placeholder="merged.pdf"
+            className="w-full rounded border border-border px-2.5 py-1.5 text-xs bg-bg-surface text-text-main outline-none focus:border-primary font-mono"
           />
         </div>
 
         <Button
           type="button"
           variant="primary"
-          size="lg"
+          size="md"
           onClick={onExecuteMerge}
           disabled={items.length < 2 || isProcessing}
           isLoading={isProcessing}
           rightIcon={<ArrowRight className="h-4 w-4" />}
-          className="w-full"
+          className="w-full py-2.5 text-xs font-bold"
         >
           {isProcessing
-            ? 'Merging PDF Documents...'
-            : `Merge ${items.length} Documents (${totalEstimatedPages} Pages)`}
+            ? 'Merging...'
+            : `Merge ${items.length} Files (${totalEstimatedPages} pp)`}
         </Button>
       </Card>
     </div>
