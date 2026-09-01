@@ -56,9 +56,9 @@ export const SplitSummaryAndAction: React.FC<SplitSummaryAndActionProps> = ({
       {progress.status !== 'idle' && <ProgressBar progress={progress} />}
 
       {result && (
-        <div className="flex items-center justify-between gap-3 p-3 rounded bg-emerald-50 border border-emerald-300">
-          <div className="flex items-center gap-2 text-xs font-bold text-emerald-900">
-            <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+        <div className="flex items-center justify-between gap-3 p-3 rounded bg-primary/5 border border-primary/30">
+          <div className="flex items-center gap-2 text-xs font-bold text-text-main">
+            <CheckCircle2 className="h-4 w-4 text-primary shrink-0" />
             <span>Done! ({result.fileCount} parts)</span>
           </div>
           <Button
@@ -67,7 +67,6 @@ export const SplitSummaryAndAction: React.FC<SplitSummaryAndActionProps> = ({
             size="sm"
             onClick={onDownload}
             leftIcon={<Download className="h-3.5 w-3.5" />}
-            className="bg-emerald-600 hover:bg-emerald-700"
           >
             Download ({result.isZip ? 'ZIP' : 'PDF'})
           </Button>

@@ -92,7 +92,7 @@ export const PagePreviewToolbar: React.FC<PagePreviewToolbarProps> = ({
             size="sm"
             onClick={onResetPageOrder}
             disabled={disabled}
-            leftIcon={<GripVertical className="h-3 w-3 text-amber-600" />}
+            leftIcon={<GripVertical className="h-3 w-3 text-primary" />}
           >
             Reset Order
           </Button>

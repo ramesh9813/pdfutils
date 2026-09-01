@@ -86,7 +86,7 @@ export const CardActionsMenu: React.FC<CardActionsMenuProps> = ({
                 }}
                 className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-text-main hover:bg-bg-subtle"
               >
-                <Move className="h-3.5 w-3.5 text-amber-600" />
+                <Move className="h-3.5 w-3.5 text-primary" />
                 <span>Pick Up Page</span>
               </button>
             )}

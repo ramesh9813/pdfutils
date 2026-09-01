@@ -41,8 +41,8 @@ export const ExpandablePreviewCard: React.FC<ExpandablePreviewCardProps> = ({
                 Preview PDF with Applied Changes
               </h4>
               {isAdjusted && (
-                <span className="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-1.5 py-0.2 rounded flex items-center gap-0.5 border border-emerald-300">
-                  <Sparkles className="h-2.5 w-2.5" />
+                <span className="bg-primary/10 text-primary text-[10px] font-bold px-1.5 py-0.2 rounded flex items-center gap-0.5 border border-primary/30">
+                  <Sparkles className="h-2.5 w-2.5 text-primary" />
                   Live Effect
                 </span>
               )}

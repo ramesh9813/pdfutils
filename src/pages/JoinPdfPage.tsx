@@ -66,14 +66,14 @@ export const JoinPdfPage: React.FC = () => {
 
       {/* Completion Download Card */}
       {result && (
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 rounded border border-emerald-300 bg-emerald-50 p-3.5 text-emerald-900">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 rounded border border-primary/30 bg-primary/5 p-3.5 text-text-main">
           <div className="flex items-center gap-3">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-white">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-white">
               <CheckCircle2 className="h-4 w-4" />
             </div>
             <div>
               <h3 className="text-xs sm:text-sm font-bold">Merged!</h3>
-              <p className="text-[11px] text-emerald-800">
+              <p className="text-[11px] text-text-sub">
                 {result.totalFiles} files ➔ <strong>{result.totalPages} pages</strong>
               </p>
             </div>

@@ -34,14 +34,14 @@ export const HeaderToolsDropdown: React.FC = () => {
   }, [location.pathname]);
 
   const navItems = [
-    { path: '/', label: 'Overview', icon: <Home className="h-4 w-4" /> },
-    { path: '/utils', label: 'Utilities Hub', icon: <LayoutGrid className="h-4 w-4" /> },
-    { path: '/convert', label: 'Convert PDF', icon: <RefreshCw className="h-4 w-4 text-rose-500" /> },
-    { path: '/reduce', label: 'Reduce PDF Size', icon: <Minimize2 className="h-4 w-4 text-emerald-600" /> },
-    { path: '/split', label: 'Split PDF', icon: <Scissors className="h-4 w-4 text-sky-600" /> },
-    { path: '/merge', label: 'Merge & Insert', icon: <Layers className="h-4 w-4 text-indigo-600" /> },
-    { path: '/reorder', label: 'Reorder Pages', icon: <ArrowUpDown className="h-4 w-4 text-amber-600" /> },
-    { path: '/settings', label: 'Settings', icon: <Settings className="h-4 w-4 text-text-sub" /> },
+    { path: '/', label: 'Overview', icon: <Home className="h-4 w-4 text-primary" /> },
+    { path: '/utils', label: 'Utilities Hub', icon: <LayoutGrid className="h-4 w-4 text-primary" /> },
+    { path: '/convert', label: 'Convert PDF', icon: <RefreshCw className="h-4 w-4 text-primary" /> },
+    { path: '/reduce', label: 'Reduce PDF Size', icon: <Minimize2 className="h-4 w-4 text-primary" /> },
+    { path: '/split', label: 'Split PDF', icon: <Scissors className="h-4 w-4 text-primary" /> },
+    { path: '/merge', label: 'Merge & Insert', icon: <Layers className="h-4 w-4 text-primary" /> },
+    { path: '/reorder', label: 'Reorder Pages', icon: <ArrowUpDown className="h-4 w-4 text-primary" /> },
+    { path: '/settings', label: 'Settings', icon: <Settings className="h-4 w-4 text-primary" /> },
   ];
 
   return (

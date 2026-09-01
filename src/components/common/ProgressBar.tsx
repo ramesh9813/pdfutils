@@ -21,7 +21,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({ progress, className = 
           {isError ? (
             <AlertCircle className="h-4 w-4 text-danger" />
           ) : isComplete ? (
-            <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+            <CheckCircle2 className="h-4 w-4 text-primary" />
           ) : (
             <Loader2 className="h-4 w-4 animate-spin text-primary" />
           )}
@@ -37,7 +37,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({ progress, className = 
       <div className="h-2 w-full overflow-hidden rounded bg-bg-subtle border border-border">
         <div
           className={`h-full transition-all duration-200 ${
-            isError ? 'bg-danger' : isComplete ? 'bg-emerald-600' : 'bg-primary'
+            isError ? 'bg-danger' : 'bg-primary'
           }`}
           style={{ width: `${percentage}%` }}
         />

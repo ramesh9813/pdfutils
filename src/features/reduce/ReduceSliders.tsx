@@ -126,7 +126,7 @@ export const ReduceSliders: React.FC<ReduceSlidersProps> = ({
             onQualityChange(65);
             onTargetMbChange(Math.max(minMb, Math.round(actualSizeMb * 0.65 * 100) / 100));
           }}
-          className="px-2 py-0.5 text-[11px] rounded border border-primary/40 bg-sky-50 hover:bg-sky-100 text-primary font-medium"
+          className="px-2 py-0.5 text-[11px] rounded border border-primary/40 bg-primary/10 hover:bg-primary/20 text-primary font-medium"
         >
           Balanced (65%)
         </button>

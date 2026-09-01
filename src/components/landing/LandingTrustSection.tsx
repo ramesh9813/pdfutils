@@ -15,7 +15,7 @@ export const LandingTrustSection: React.FC = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-5xl mx-auto">
         <div className="rounded-xl border border-border bg-bg-surface p-3.5 flex flex-col gap-1.5 shadow-2xs">
-          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600 border border-emerald-200">
+          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 text-primary border border-primary/20">
             <Lock className="h-3.5 w-3.5" />
           </div>
           <div>
@@ -27,7 +27,7 @@ export const LandingTrustSection: React.FC = () => {
         </div>
 
         <div className="rounded-xl border border-border bg-bg-surface p-3.5 flex flex-col gap-1.5 shadow-2xs">
-          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-sky-50 text-primary border border-sky-200">
+          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 text-primary border border-primary/20">
             <Zap className="h-3.5 w-3.5" />
           </div>
           <div>
@@ -39,7 +39,7 @@ export const LandingTrustSection: React.FC = () => {
         </div>
 
         <div className="rounded-xl border border-border bg-bg-surface p-3.5 flex flex-col gap-1.5 shadow-2xs">
-          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600 border border-indigo-200">
+          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 text-primary border border-primary/20">
             <Cpu className="h-3.5 w-3.5" />
           </div>
           <div>

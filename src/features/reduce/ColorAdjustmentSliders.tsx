@@ -45,7 +45,7 @@ export const ColorAdjustmentSliders: React.FC<ColorAdjustmentSlidersProps> = ({
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <RangeSliderItem
           label="Black & White"
-          icon={<Palette className="h-3.5 w-3.5 text-text-sub" />}
+          icon={<Palette className="h-3.5 w-3.5 text-primary" />}
           value={visuals.grayscalePercent}
           valueDisplay={
             visuals.grayscalePercent === 0
@@ -65,7 +65,7 @@ export const ColorAdjustmentSliders: React.FC<ColorAdjustmentSlidersProps> = ({
 
         <RangeSliderItem
           label="Sharpness & Text Clarity"
-          icon={<Zap className="h-3.5 w-3.5 text-sky-500" />}
+          icon={<Zap className="h-3.5 w-3.5 text-primary" />}
           value={visuals.sharpnessPercent}
           valueDisplay={visuals.sharpnessPercent === 0 ? 'Normal' : `+${visuals.sharpnessPercent}%`}
           min={0}
@@ -80,7 +80,7 @@ export const ColorAdjustmentSliders: React.FC<ColorAdjustmentSlidersProps> = ({
 
         <RangeSliderItem
           label="Color Vibrance & Deep Darks"
-          icon={<Sparkles className="h-3.5 w-3.5 text-purple-500" />}
+          icon={<Sparkles className="h-3.5 w-3.5 text-primary" />}
           value={visuals.colorBoostPercent}
           valueDisplay={visuals.colorBoostPercent === 0 ? 'Normal' : `+${visuals.colorBoostPercent}%`}
           min={0}
@@ -95,7 +95,7 @@ export const ColorAdjustmentSliders: React.FC<ColorAdjustmentSlidersProps> = ({
 
         <RangeSliderItem
           label="Text Boldness & Stroke Width"
-          icon={<Bold className="h-3.5 w-3.5 text-slate-800" />}
+          icon={<Bold className="h-3.5 w-3.5 text-primary" />}
           value={visuals.textWeightPercent}
           valueDisplay={visuals.textWeightPercent === 0 ? 'Normal' : `+${visuals.textWeightPercent}%`}
           min={0}
@@ -110,7 +110,7 @@ export const ColorAdjustmentSliders: React.FC<ColorAdjustmentSlidersProps> = ({
 
         <RangeSliderItem
           label="Brightness"
-          icon={<Sun className="h-3.5 w-3.5 text-amber-500" />}
+          icon={<Sun className="h-3.5 w-3.5 text-primary" />}
           value={visuals.brightnessPercent}
           valueDisplay={`${visuals.brightnessPercent}%`}
           min={50}
@@ -125,7 +125,7 @@ export const ColorAdjustmentSliders: React.FC<ColorAdjustmentSlidersProps> = ({
 
         <RangeSliderItem
           label="Contrast"
-          icon={<Contrast className="h-3.5 w-3.5 text-blue-600" />}
+          icon={<Contrast className="h-3.5 w-3.5 text-primary" />}
           value={visuals.contrastPercent}
           valueDisplay={`${visuals.contrastPercent}%`}
           min={50}
@@ -140,7 +140,7 @@ export const ColorAdjustmentSliders: React.FC<ColorAdjustmentSlidersProps> = ({
 
         <RangeSliderItem
           label="Saturation"
-          icon={<Droplet className="h-3.5 w-3.5 text-rose-500" />}
+          icon={<Droplet className="h-3.5 w-3.5 text-primary" />}
           value={visuals.saturationPercent}
           valueDisplay={`${visuals.saturationPercent}%`}
           min={0}

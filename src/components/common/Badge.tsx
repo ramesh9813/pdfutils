@@ -15,8 +15,8 @@ export const Badge: React.FC<BadgeProps> = ({
 }) => {
   const variantStyles = {
     neutral: 'bg-bg-subtle text-text-sub border-border',
-    primary: 'bg-sky-50 text-primary border-sky-200',
-    success: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+    primary: 'bg-primary/10 text-primary border-primary/25',
+    success: 'bg-primary/10 text-primary border-primary/25',
     warning: 'bg-amber-50 text-amber-800 border-amber-200',
     danger: 'bg-rose-50 text-rose-700 border-rose-200',
   };

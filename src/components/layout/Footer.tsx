@@ -35,8 +35,8 @@ export const Footer: React.FC = () => {
             <p className="text-xs text-text-sub leading-relaxed">
               Browser-native PDF suite. Zero server uploads, private in-memory processing.
             </p>
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-emerald-300/80 bg-emerald-50/90 dark:bg-emerald-950/40 text-[11px] font-semibold text-emerald-800 dark:text-emerald-300 w-fit">
-              <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-primary/30 bg-primary/10 dark:bg-primary/20 text-[11px] font-semibold text-primary w-fit">
+              <ShieldCheck className="h-3.5 w-3.5 text-primary" />
               <span>100% Client-Side Private</span>
             </div>
           </div>
@@ -48,19 +48,19 @@ export const Footer: React.FC = () => {
             </h4>
             <div className="flex flex-col gap-1.5 text-xs text-text-sub">
               <NavLink to="/convert" className="hover:text-primary transition-colors flex items-center gap-1.5">
-                <RefreshCw className="h-3 w-3 text-rose-500" />
+                <RefreshCw className="h-3 w-3 text-primary" />
                 <span>Universal Convert</span>
               </NavLink>
               <NavLink to="/reduce" className="hover:text-primary transition-colors flex items-center gap-1.5">
-                <Minimize2 className="h-3 w-3 text-emerald-500" />
+                <Minimize2 className="h-3 w-3 text-primary" />
                 <span>Reduce Size & B&W</span>
               </NavLink>
               <NavLink to="/split" className="hover:text-primary transition-colors flex items-center gap-1.5">
-                <Scissors className="h-3 w-3 text-sky-500" />
+                <Scissors className="h-3 w-3 text-primary" />
                 <span>Split Slices & Cuts</span>
               </NavLink>
               <NavLink to="/merge" className="hover:text-primary transition-colors flex items-center gap-1.5">
-                <Layers className="h-3 w-3 text-indigo-500" />
+                <Layers className="h-3 w-3 text-primary" />
                 <span>Merge & Insert Inside</span>
               </NavLink>
             </div>
@@ -82,7 +82,7 @@ export const Footer: React.FC = () => {
                 Reorder Pages
               </NavLink>
               <NavLink to="/settings" className="hover:text-primary transition-colors flex items-center gap-1.5">
-                <Settings className="h-3 w-3" />
+                <Settings className="h-3 w-3 text-primary" />
                 <span>Preferences</span>
               </NavLink>
             </div>
@@ -99,7 +99,7 @@ export const Footer: React.FC = () => {
                 <span>WebAssembly & Workers</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <Zap className="h-3.5 w-3.5 text-amber-500" />
+                <Zap className="h-3.5 w-3.5 text-primary" />
                 <span>Instant In-Memory Speed</span>
               </div>
               <span className="text-[11px] text-text-muted">

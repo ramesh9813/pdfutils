@@ -133,9 +133,9 @@ export const ConvertPage: React.FC = () => {
           {progress.status !== 'idle' && <ProgressBar progress={progress} />}
 
           {result && (
-            <div className="flex items-center justify-between p-3 rounded-lg border border-emerald-300 bg-emerald-50 text-emerald-900">
+            <div className="flex items-center justify-between p-3 rounded-lg border border-primary/30 bg-primary/5 text-text-main">
               <div className="flex items-center gap-2">
-                <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+                <CheckCircle2 className="h-4 w-4 text-primary" />
                 <span className="text-xs font-bold">Converted: {result.filename}</span>
               </div>
               <Button type="button" variant="primary" size="sm" onClick={() => saveAs(result.blob, result.filename)} leftIcon={<Download className="h-3.5 w-3.5" />}>

@@ -10,7 +10,7 @@ export const ReduceSettingsSection: React.FC = () => {
   return (
     <Card className="flex flex-col gap-4 p-4 border border-border bg-bg-surface">
       <div className="flex items-center gap-2 border-b border-border pb-2.5">
-        <div className="flex h-7 w-7 items-center justify-center rounded bg-emerald-50 text-emerald-600 border border-emerald-200">
+        <div className="flex h-7 w-7 items-center justify-center rounded bg-primary/10 text-primary border border-primary/20">
           <Minimize2 className="h-4 w-4" />
         </div>
         <div>

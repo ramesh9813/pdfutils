@@ -64,7 +64,7 @@ export const AdjustmentPresetsRow: React.FC<AdjustmentPresetsRowProps> = ({
         }
         className={`px-2 py-1 rounded text-[11px] font-semibold transition-all border ${
           visuals.colorBoostPercent >= 50
-            ? 'bg-purple-700 text-white border-purple-700 shadow-xs'
+            ? 'bg-primary text-white border-primary shadow-xs'
             : 'bg-bg-subtle text-text-sub hover:bg-slate-200 border-border'
         }`}
       >
@@ -87,9 +87,9 @@ export const AdjustmentPresetsRow: React.FC<AdjustmentPresetsRowProps> = ({
               textWeightPercent: 0,
             })
           }
-          className="px-2 py-1 rounded text-[11px] font-semibold text-rose-600 hover:bg-rose-50 border border-rose-200 transition-all flex items-center gap-1"
+          className="px-2 py-1 rounded text-[11px] font-semibold text-primary hover:bg-primary/10 border border-primary/30 transition-all flex items-center gap-1"
         >
-          <RotateCcw className="h-3 w-3" />
+          <RotateCcw className="h-3 w-3 text-primary" />
           Reset
         </button>
       )}

@@ -27,7 +27,7 @@ export const QuickStartUploadCard: React.FC<QuickStartUploadCardProps> = ({
   onNavigate,
 }) => {
   return (
-    <Card className="flex flex-col gap-4 p-5 sm:p-6 bg-gradient-to-br from-sky-50/70 via-bg-surface to-bg-surface border-2 border-sky-200/80 shadow-xs">
+    <Card className="flex flex-col gap-4 p-5 sm:p-6 bg-gradient-to-br from-primary/5 via-bg-surface to-bg-surface border-2 border-primary/20 shadow-xs">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
@@ -58,10 +58,10 @@ export const QuickStartUploadCard: React.FC<QuickStartUploadCardProps> = ({
           className="py-5 bg-white/60"
         />
       ) : (
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-3.5 rounded-lg bg-white border border-sky-300 shadow-xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-3.5 rounded-lg bg-bg-surface border border-primary/40 shadow-xs">
           <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
-              <CheckCircle2 className="h-4 w-4" />
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+              <CheckCircle2 className="h-4 w-4 text-primary" />
             </div>
             <div className="flex flex-col">
               <span className="text-xs font-bold text-text-main truncate max-w-sm">
@@ -103,7 +103,7 @@ export const QuickStartUploadCard: React.FC<QuickStartUploadCardProps> = ({
               onClick={() => onNavigate('/convert')}
               className="px-3 py-1.5 text-xs font-semibold rounded border border-border bg-bg-surface hover:bg-bg-subtle text-text-main transition-colors flex items-center gap-1.5"
             >
-              <RefreshCw className="h-3.5 w-3.5 text-rose-500" />
+              <RefreshCw className="h-3.5 w-3.5 text-primary" />
               Convert
             </button>
             <button
