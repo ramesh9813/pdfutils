@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { FileText, Scissors, Layers, ShieldCheck } from 'lucide-react';
+import { FileText, Scissors, Layers, ShieldCheck, LayoutGrid } from 'lucide-react';
 
 export const Header: React.FC = () => {
   return (
@@ -34,6 +34,19 @@ export const Header: React.FC = () => {
               }
             >
               Overview
+            </NavLink>
+            <NavLink
+              to="/hub"
+              className={({ isActive }) =>
+                `flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded transition-colors ${
+                  isActive
+                    ? 'bg-bg-subtle text-primary border border-border'
+                    : 'text-text-sub hover:text-text-main hover:bg-bg-subtle'
+                }`
+              }
+            >
+              <LayoutGrid className="h-4 w-4" />
+              Hub
             </NavLink>
             <NavLink
               to="/split"
@@ -71,6 +84,15 @@ export const Header: React.FC = () => {
           </div>
 
           <div className="flex md:hidden items-center gap-1">
+            <NavLink
+              to="/hub"
+              className={({ isActive }) =>
+                `p-2 rounded text-sm ${isActive ? 'bg-bg-subtle text-primary' : 'text-text-sub'}`
+              }
+              title="Utilities Hub"
+            >
+              <LayoutGrid className="h-4 w-4" />
+            </NavLink>
             <NavLink
               to="/split"
               className={({ isActive }) =>

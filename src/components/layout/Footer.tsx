@@ -3,7 +3,7 @@ import { ShieldCheck, Lock, Cpu } from 'lucide-react';
 
 export const Footer: React.FC = () => {
   return (
-    <footer className="h-14 w-full border-t border-border bg-bg-surface px-4 sm:px-6">
+    <footer className="sticky bottom-0 z-40 h-14 w-full border-t border-border bg-bg-surface px-4 sm:px-6">
       <div className="mx-auto flex h-full max-w-7xl items-center justify-between text-xs text-text-muted">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-1.5 text-text-sub font-medium">
