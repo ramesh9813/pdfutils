@@ -1,23 +1,12 @@
 import { PDFDocument } from 'pdf-lib';
 import { loadPdfDocument } from '../../services/pdfRenderer';
-
-export interface ReduceOptions {
-  qualityPercent: number; // 5 to 100
-  targetMb: number; // e.g. 1.5 MB
-  originalSize: number; // bytes
-}
-
-export interface ReduceResult {
-  blob: Blob;
-  originalSize: number;
-  reducedSize: number;
-  percentSaved: number;
-  pageCount: number;
-}
+import { applyCanvasFilters } from './applyCanvasFilters';
+export type { ReduceOptions, ReduceResult, ColorAdjustmentOptions } from './reduceTypes';
+import type { ReduceOptions, ReduceResult } from './reduceTypes';
 
 /**
  * Compresses and optimizes a PDF document by re-sampling embedded pages and rasterizing
- * page canvases at targeted JPEG compression factors and resolutions.
+ * page canvases at targeted JPEG compression factors and visual enhancements.
  */
 export async function reducePdfSize(
   sourceBuffer: ArrayBuffer,
@@ -63,8 +52,11 @@ export async function reducePdfSize(
       viewport,
     }).promise;
 
+    // Apply color, contrast, brightness, and grayscale enhancements
+    const finalCanvas = applyCanvasFilters(canvas, options);
+
     // Convert canvas to compressed JPEG byte array
-    const dataUrl = canvas.toDataURL('image/jpeg', jpegQuality);
+    const dataUrl = finalCanvas.toDataURL('image/jpeg', jpegQuality);
     const base64Data = dataUrl.split(',')[1];
     const binaryStr = atob(base64Data);
     const jpegBytes = new Uint8Array(binaryStr.length);
