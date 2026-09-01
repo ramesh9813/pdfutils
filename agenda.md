@@ -6,46 +6,46 @@
   - [x] Git initialization, branch configuration
   - [x] `.gitignore` setup
   - [x] Tracking agenda (`agenda.md`) created
-  - [ ] Vite + React 18 + TypeScript strict mode initialization
-  - [ ] Dependencies installation (`pdf-lib`, `pdfjs-dist`, `jszip`, `file-saver`, `lucide-react`, `@hello-pangea/dnd`, Tailwind CSS)
+  - [x] Vite + React 18 + TypeScript strict mode initialization
+  - [x] Dependencies installation (`pdf-lib`, `pdfjs-dist`, `jszip`, `file-saver`, `lucide-react`, `@hello-pangea/dnd`, Tailwind CSS)
 
-- [ ] **Milestone 2: Design System & Styling**
-  - [ ] Configure `variables.css` with CSS custom properties (flat modern aesthetic, solid colors, zero gradients)
-  - [ ] Configure `globals.css` and `tailwind.config.js` with design tokens
-  - [ ] Persistent layout dimensions (4rem header, 3.5rem footer)
+- [x] **Milestone 2: Design System & Styling**
+  - [x] Configure `variables.css` with CSS custom properties (flat modern aesthetic, solid colors, zero gradients)
+  - [x] Configure `globals.css` and `tailwind.config.js` with design tokens
+  - [x] Persistent layout dimensions (4rem header, 3.5rem footer)
 
-- [ ] **Milestone 3: Core Architecture & Pure Services (Decoupled)**
-  - [ ] `pdf.types.ts` type definitions
-  - [ ] `pdfRenderer.ts` using `pdfjs-dist` with worker configuration
-  - [ ] `pdfSplitter.ts` using `pdf-lib` and `jszip`
-  - [ ] `pdfMerger.ts` using `pdf-lib`
+- [x] **Milestone 3: Core Architecture & Pure Services (Decoupled)**
+  - [x] `pdf.types.ts` type definitions
+  - [x] `pdfRenderer.ts` using `pdfjs-dist` with worker configuration
+  - [x] `pdfSplitter.ts` using `pdf-lib` and `jszip`
+  - [x] `pdfMerger.ts` using `pdf-lib`
 
-- [ ] **Milestone 4: Custom React Hooks**
-  - [ ] `usePdfSession.ts`
-  - [ ] `usePdfSplit.ts`
-  - [ ] `usePdfMerge.ts`
+- [x] **Milestone 4: Custom React Hooks**
+  - [x] `usePdfSession.ts` (Progressive thumbnails, multi-page parsing, rotation)
+  - [x] `usePdfSplit.ts` (Split mode selection, validation, zip packaging, download)
+  - [x] `usePdfMerge.ts` (Queue management, drag & drop, rotation, per-file range, download)
 
-- [ ] **Milestone 5: Layout & Common Components**
-  - [ ] Layout: `AppLayout`, `Header`, `Footer`
-  - [ ] Common: `Button`, `Card`, `Dropzone`, `Modal`, `ProgressBar`, `Badge`
+- [x] **Milestone 5: Layout & Common Components**
+  - [x] Layout: `AppLayout`, `Header`, `Footer`
+  - [x] Common: `Button`, `Card`, `Dropzone`, `Modal`, `ProgressBar`, `Badge`
 
-- [ ] **Milestone 6: Split PDF Feature & Components**
-  - [ ] `SplitConfigPanel` (Modes: Extract Pages, Split by Range, Split Every N Pages, Single Pages)
-  - [ ] `PagePreviewGrid` & `PageThumbnailCard` (Selection, rotation, preview modal)
-  - [ ] Split processing & Zip/PDF download
+- [x] **Milestone 6: Split PDF Feature & Components**
+  - [x] `SplitConfigPanel` (Modes: Extract Pages, Split by Range, Split Every N Pages, Single Pages)
+  - [x] `PagePreviewGrid` & `PageThumbnailCard` (Selection, rotation, preview modal, multi-size views)
+  - [x] Split processing & Zip/PDF download
 
-- [ ] **Milestone 7: Join PDF Feature & Components**
-  - [ ] `MergeFileList` & `MergeFileItem` (Drag & drop reordering, remove, page range selector)
-  - [ ] Merge processing & download
+- [x] **Milestone 7: Join PDF Feature & Components**
+  - [x] `MergeFileList` & `MergeFileItem` (Drag & drop reordering, remove, page range selector, rotation)
+  - [x] Merge processing & download
 
-- [ ] **Milestone 8: Routing & Application Pages**
-  - [ ] `LandingPage`
-  - [ ] `UtilitiesHubPage`
-  - [ ] `SplitPdfPage`
-  - [ ] `JoinPdfPage`
-  - [ ] `AppRoutes` integration
+- [x] **Milestone 8: Routing & Application Pages**
+  - [x] `LandingPage` (Hero, feature cards, privacy architecture)
+  - [x] `UtilitiesHubPage` (Tool cards, runtime specs, feature checklist)
+  - [x] `SplitPdfPage` (Full split workspace with preview and live status)
+  - [x] `JoinPdfPage` (Full merge workspace with queue management)
+  - [x] `AppRoutes` integration
 
-- [ ] **Milestone 9: End-to-End Verification & Production Build**
-  - [ ] TypeScript compilation check
-  - [ ] Vite production build test
-  - [ ] Manual & automated validation of PDF operations
+- [/] **Milestone 9: End-to-End Verification & Production Build**
+  - [x] TypeScript strict compilation check
+  - [x] Vite production build test
+  - [ ] Automated and manual verification of core PDF split and merge workflows

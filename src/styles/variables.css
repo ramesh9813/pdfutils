@@ -1,0 +1,29 @@
+:root {
+  /* Surfaces & Backgrounds */
+  --color-bg-app: #f8fafc;
+  --color-bg-surface: #ffffff;
+  --color-bg-subtle: #f1f5f9;
+
+  /* Borders */
+  --color-border: #e2e8f0;
+  --color-border-active: #0284c7;
+
+  /* Text */
+  --color-text-main: #0f172a;
+  --color-text-sub: #475569;
+  --color-text-muted: #94a3b8;
+
+  /* Primary Action */
+  --color-primary: #0284c7;
+  --color-primary-hover: #0369a1;
+
+  /* Semantic Status Colors (Flat solid tones) */
+  --color-danger: #ef4444;
+  --color-danger-hover: #dc2626;
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+
+  /* Dimensions */
+  --height-header: 4rem;
+  --height-footer: 3.5rem;
+}
