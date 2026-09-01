@@ -18,25 +18,23 @@ export const ReduceSliders: React.FC<ReduceSlidersProps> = ({
   onQualityChange,
   onTargetMbChange,
 }) => {
-  const minMb = Math.max(0.05, Math.round((actualSizeMb * 0.1) * 100) / 100);
-  const maxMb = Math.max(minMb + 0.1, actualSizeMb);
+  const minMb = Math.max(0.05, Math.round((actualSizeMb * 0.05) * 100) / 100);
+  const maxMb = Math.max(minMb + 0.1, Math.round(actualSizeMb * 100) / 100);
 
   const handleQualityInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = parseInt(e.target.value, 10) || 5;
     onQualityChange(val);
-    // Sync target MB
-    const estimatedRatio = 0.15 + (val / 100) * 0.85;
-    const estMb = Math.round(actualSizeMb * estimatedRatio * 100) / 100;
+    const ratio = Math.max(0.05, (val - 10) / 85);
+    const estMb = Math.round(actualSizeMb * ratio * 100) / 100;
     onTargetMbChange(Math.max(minMb, Math.min(estMb, maxMb)));
   };
 
   const handleMbInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = parseFloat(e.target.value) || minMb;
     onTargetMbChange(val);
-    // Sync quality
     const ratio = Math.max(0.05, Math.min(1.0, val / Math.max(0.01, actualSizeMb)));
-    const quality = Math.round(ratio * 100);
-    onQualityChange(Math.max(5, Math.min(100, quality)));
+    const quality = Math.round(20 + ratio * 75);
+    onQualityChange(Math.max(10, Math.min(95, quality)));
   };
 
   return (
