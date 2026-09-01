@@ -224,54 +224,92 @@ export const SplitConfigPanel: React.FC<SplitConfigPanelProps> = ({
         )}
 
         {options.mode === 'range' && (
-          <div className="flex flex-col gap-2">
-            <div className="flex items-center justify-between">
-              <label className="font-semibold text-text-main" htmlFor="range-input">
-                Specify Page Ranges:
+          <div className="flex flex-col gap-2.5">
+            <div className="flex flex-wrap items-center justify-between gap-1">
+              <label className="font-semibold text-text-main flex items-center gap-1.5" htmlFor="range-input">
+                <Scissors className="h-3.5 w-3.5 text-primary" />
+                <span>Python-Based Slicing & Visual Split Points:</span>
               </label>
-              <span className="text-[11px] text-text-muted">Total: {totalPages} pages</span>
+              <span className="text-[11px] font-mono text-primary font-semibold">
+                {options.splitPoints.length} Split Point(s) = {options.splitPoints.length + 1} PDF(s)
+              </span>
             </div>
+
             <input
               id="range-input"
               type="text"
               value={options.customRanges}
               onChange={(e) => onSetCustomRanges(e.target.value)}
               disabled={isProcessing}
-              placeholder="e.g. 1-3, 5, 7-9"
+              placeholder="e.g. 1:5, 6:9, 10:50, 51:67"
               className={`w-full rounded border px-3 py-2 text-xs font-mono bg-bg-surface text-text-main outline-none focus:border-primary ${
                 !rangeValidation.valid ? 'border-danger' : 'border-border'
               }`}
             />
+
             {!rangeValidation.valid ? (
               <p className="text-[11px] text-danger">{rangeValidation.error}</p>
             ) : (
               <p className="text-[11px] text-text-muted">
-                Separate page numbers or ranges by commas. Example: <code className="bg-bg-surface px-1 py-0.5 rounded border border-border">1-3, 4-6</code>
+                Using Python-based indexing: <code className="bg-bg-surface px-1 py-0.5 rounded border border-border text-primary font-semibold">1:5</code> splits pages 1 to 5, <code className="bg-bg-surface px-1 py-0.5 rounded border border-border text-primary font-semibold">6:9</code> splits pages 6 to 9. Double-click any preview image below to toggle a blue split point.
               </p>
             )}
 
+            {/* Split Points Indicators */}
+            {options.splitPoints.length > 0 && (
+              <div className="flex flex-wrap items-center gap-1.5 pt-1">
+                <span className="text-[11px] font-medium text-text-sub">Active Split Points:</span>
+                {options.splitPoints.map((pt, idx) => (
+                  <span
+                    key={pt}
+                    className="inline-flex items-center gap-1 bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 rounded text-[11px] font-mono"
+                  >
+                    <Scissors className="h-2.5 w-2.5" />
+                    Cut #{idx + 1}: after p.{pt}
+                  </span>
+                ))}
+              </div>
+            )}
+
             {/* Quick helper chips */}
-            <div className="flex flex-wrap gap-1.5 mt-1">
+            <div className="flex flex-wrap gap-1.5 mt-0.5">
               <button
                 type="button"
-                onClick={() => onSetCustomRanges(`1-${Math.ceil(totalPages / 2)}`)}
+                onClick={() =>
+                  onSetCustomRanges(
+                    `1:${Math.ceil(totalPages / 2)}, ${Math.ceil(totalPages / 2) + 1}:${totalPages}`
+                  )
+                }
                 disabled={isProcessing}
-                className="px-2 py-0.5 rounded border border-border bg-bg-surface hover:bg-border text-text-sub text-[11px]"
+                className="px-2 py-0.5 rounded border border-border bg-bg-surface hover:bg-border text-text-sub text-[11px] font-mono"
               >
-                First Half (1–{Math.ceil(totalPages / 2)})
+                Halves (1:{Math.ceil(totalPages / 2)}, {Math.ceil(totalPages / 2) + 1}:{totalPages})
               </button>
-              {totalPages > 1 && (
+
+              {totalPages >= 4 && (
                 <button
                   type="button"
-                  onClick={() =>
-                    onSetCustomRanges(`${Math.ceil(totalPages / 2) + 1}-${totalPages}`)
-                  }
+                  onClick={() => {
+                    const q1 = Math.ceil(totalPages / 4);
+                    const q2 = Math.ceil(totalPages / 2);
+                    const q3 = Math.ceil((totalPages * 3) / 4);
+                    onSetCustomRanges(`1:${q1}, ${q1 + 1}:${q2}, ${q2 + 1}:${q3}, ${q3 + 1}:${totalPages}`);
+                  }}
                   disabled={isProcessing}
-                  className="px-2 py-0.5 rounded border border-border bg-bg-surface hover:bg-border text-text-sub text-[11px]"
+                  className="px-2 py-0.5 rounded border border-border bg-bg-surface hover:bg-border text-text-sub text-[11px] font-mono"
                 >
-                  Second Half ({Math.ceil(totalPages / 2) + 1}–{totalPages})
+                  Quarters
                 </button>
               )}
+
+              <button
+                type="button"
+                onClick={() => onSetCustomRanges(`1:${totalPages}`)}
+                disabled={isProcessing}
+                className="px-2 py-0.5 rounded border border-border bg-bg-surface hover:bg-border text-text-sub text-[11px] font-mono"
+              >
+                Reset to Full (1:{totalPages})
+              </button>
             </div>
           </div>
         )}

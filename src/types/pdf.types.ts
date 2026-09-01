@@ -8,7 +8,8 @@ export interface PdfDocumentInfo {
 }
 
 export interface PdfPageDetail {
-  pageNumber: number; // 1-indexed
+  pageNumber: number; // 1-indexed (current sequence position)
+  originalPageIndex: number; // 0-indexed original page index in source PDF
   width: number;
   height: number;
   aspectRatio: number;
@@ -27,7 +28,8 @@ export interface SplitRange {
 export interface SplitOptions {
   mode: SplitMode;
   selectedPages: number[]; // 1-indexed page numbers
-  customRanges: string; // e.g. "1-3, 5, 7-10"
+  splitPoints: number[]; // 1-indexed page numbers where split cut occurs
+  customRanges: string; // e.g. "1:5, 6:9, 10:50, 51:67" (Python-based indexing)
   parsedRanges: SplitRange[];
   everyN: number;
   mergeExtracted: boolean; // if true in extract mode, returns 1 merged PDF; if false, zipped files
@@ -58,6 +60,8 @@ export interface SplitOutput {
   isZip: boolean;
 }
 
+export type JoinPosition = 'end' | 'beginning' | 'inside';
+
 export interface MergeItem {
   id: string;
   file: File;
@@ -66,8 +70,11 @@ export interface MergeItem {
   size: number;
   pageCount: number;
   thumbnailUrl?: string;
-  pageRange?: string; // "all" or e.g. "1-3"
+  pageRange?: string; // "all" or e.g. "1:3"
   rotationOffset?: number; // 0, 90, 180, 270
+  joinPosition?: JoinPosition; // 'end' | 'beginning' | 'inside'
+  targetDocumentId?: string; // document id to insert inside
+  insertAfterPage?: number; // 1-indexed page of target document to insert after
 }
 
 export interface MergeOptions {

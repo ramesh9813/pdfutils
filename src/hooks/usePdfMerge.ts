@@ -7,7 +7,7 @@ import type {
   ProgressState,
 } from '../types/pdf.types';
 import { getPdfPageCount, renderPageThumbnail } from '../services/pdfRenderer';
-import { mergePdfs } from '../services/pdfMerger';
+import { mergePdfs, buildMergeAssembly } from '../services/pdfMerger';
 
 export function usePdfMerge() {
   const [items, setItems] = useState<MergeItem[]>([]);
@@ -102,12 +102,39 @@ export function usePdfMerge() {
     );
   }, []);
 
+  const updateJoinPosition = useCallback(
+    (
+      id: string,
+      joinPosition: 'end' | 'beginning' | 'inside',
+      targetDocumentId?: string,
+      insertAfterPage?: number
+    ) => {
+      setItems((prev) =>
+        prev.map((it) =>
+          it.id === id
+            ? {
+                ...it,
+                joinPosition,
+                targetDocumentId: targetDocumentId ?? it.targetDocumentId,
+                insertAfterPage: insertAfterPage !== undefined ? insertAfterPage : (it.insertAfterPage ?? 1),
+              }
+            : it
+        )
+      );
+    },
+    []
+  );
+
   const setOutputFilename = useCallback((outputFilename: string) => {
     setOptions((prev) => ({ ...prev, outputFilename }));
   }, []);
 
   const totalEstimatedPages = useMemo(() => {
-    return items.reduce((acc, item) => acc + item.pageCount, 0);
+    try {
+      return buildMergeAssembly(items).length;
+    } catch {
+      return items.reduce((acc, item) => acc + item.pageCount, 0);
+    }
   }, [items]);
 
   const executeMerge = useCallback(async () => {
@@ -186,6 +213,7 @@ export function usePdfMerge() {
     moveItem,
     updatePageRange,
     rotateItem,
+    updateJoinPosition,
     setOutputFilename,
     executeMerge,
     downloadResult,

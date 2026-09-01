@@ -6,13 +6,19 @@ import type {
   ProgressState,
   SplitOutput,
 } from '../types/pdf.types';
-import { splitPdf, parseRangeString } from '../services/pdfSplitter';
+import {
+  splitPdf,
+  parseRangeString,
+  splitPointsToPythonRanges,
+  rangesToSplitPoints,
+} from '../services/pdfSplitter';
 
 export function usePdfSplit(initialFilename: string = 'document') {
   const [options, setOptions] = useState<SplitOptions>({
-    mode: 'extract',
+    mode: 'range',
     selectedPages: [],
-    customRanges: '1',
+    splitPoints: [],
+    customRanges: '1:1',
     parsedRanges: [{ start: 1, end: 1 }],
     everyN: 2,
     mergeExtracted: true,
@@ -64,8 +70,56 @@ export function usePdfSplit(initialFilename: string = 'document') {
     });
   }, []);
 
-  const setCustomRanges = useCallback((rangesStr: string) => {
-    setOptions((prev) => ({ ...prev, customRanges: rangesStr }));
+  const toggleSplitPoint = useCallback((pageNumber: number, totalPages: number) => {
+    if (pageNumber < 1 || pageNumber >= totalPages) return;
+    setOptions((prev) => {
+      const exists = prev.splitPoints.includes(pageNumber);
+      const newSplitPoints = exists
+        ? prev.splitPoints.filter((p) => p !== pageNumber)
+        : [...prev.splitPoints, pageNumber].sort((a, b) => a - b);
+
+      const newRangesStr = splitPointsToPythonRanges(newSplitPoints, totalPages);
+      const parsed = parseRangeString(newRangesStr, totalPages);
+
+      return {
+        ...prev,
+        mode: 'range',
+        splitPoints: newSplitPoints,
+        customRanges: newRangesStr,
+        parsedRanges: parsed.valid ? parsed.ranges : prev.parsedRanges,
+      };
+    });
+  }, []);
+
+  const clearSplitPoints = useCallback((totalPages: number) => {
+    setOptions((prev) => ({
+      ...prev,
+      splitPoints: [],
+      customRanges: `1:${totalPages}`,
+      parsedRanges: [{ start: 1, end: totalPages }],
+    }));
+  }, []);
+
+  const setCustomRanges = useCallback((rangesStr: string, totalPages?: number) => {
+    setOptions((prev) => {
+      let newSplitPoints = prev.splitPoints;
+      let parsedRanges = prev.parsedRanges;
+
+      if (totalPages && totalPages > 0) {
+        const parsed = parseRangeString(rangesStr, totalPages);
+        if (parsed.valid) {
+          parsedRanges = parsed.ranges;
+          newSplitPoints = rangesToSplitPoints(parsed.ranges, totalPages);
+        }
+      }
+
+      return {
+        ...prev,
+        customRanges: rangesStr,
+        splitPoints: newSplitPoints,
+        parsedRanges,
+      };
+    });
   }, []);
 
   const setEveryN = useCallback((everyN: number) => {
@@ -102,7 +156,12 @@ export function usePdfSplit(initialFilename: string = 'document') {
   );
 
   const executeSplit = useCallback(
-    async (sourceBuffer: ArrayBuffer, totalPages: number) => {
+    async (
+      sourceBuffer: ArrayBuffer,
+      totalPages: number,
+      pageOrderMapping?: number[],
+      pageRotations?: { [originalIndex: number]: number }
+    ) => {
       const validation = validateConfig(totalPages);
       if (!validation.valid) {
         setProgress({
@@ -123,14 +182,20 @@ export function usePdfSplit(initialFilename: string = 'document') {
       });
 
       try {
-        const output = await splitPdf(sourceBuffer, options, (current, total, message) => {
-          setProgress({
-            status: current === 100 ? 'completed' : 'processing',
-            current,
-            total,
-            message,
-          });
-        });
+        const output = await splitPdf(
+          sourceBuffer,
+          options,
+          (current, total, message) => {
+            setProgress({
+              status: current === 100 ? 'completed' : 'processing',
+              current,
+              total,
+              message,
+            });
+          },
+          pageOrderMapping,
+          pageRotations
+        );
 
         setResult(output);
         return output;
@@ -178,6 +243,8 @@ export function usePdfSplit(initialFilename: string = 'document') {
     selectAll,
     deselectAll,
     invertSelection,
+    toggleSplitPoint,
+    clearSplitPoints,
     setCustomRanges,
     setEveryN,
     setMergeExtracted,
@@ -188,3 +255,4 @@ export function usePdfSplit(initialFilename: string = 'document') {
     resetSplit,
   };
 }
+

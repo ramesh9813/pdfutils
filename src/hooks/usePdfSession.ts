@@ -126,6 +126,38 @@ export function usePdfSession() {
     }
   }, [pages]);
 
+  const reorderPages = useCallback((fromIndex: number, toIndex: number) => {
+    setPages((prev) => {
+      if (
+        fromIndex < 0 ||
+        fromIndex >= prev.length ||
+        toIndex < 0 ||
+        toIndex >= prev.length ||
+        fromIndex === toIndex
+      ) {
+        return prev;
+      }
+      const updated = [...prev];
+      const [movedPage] = updated.splice(fromIndex, 1);
+      updated.splice(toIndex, 0, movedPage);
+
+      return updated.map((p, idx) => ({
+        ...p,
+        pageNumber: idx + 1,
+      }));
+    });
+  }, []);
+
+  const resetPageOrder = useCallback(() => {
+    setPages((prev) => {
+      const sorted = [...prev].sort((a, b) => a.originalPageIndex - b.originalPageIndex);
+      return sorted.map((p, idx) => ({
+        ...p,
+        pageNumber: idx + 1,
+      }));
+    });
+  }, []);
+
   return {
     docInfo,
     pages,
@@ -135,5 +167,7 @@ export function usePdfSession() {
     getFreshBuffer,
     resetSession,
     rotatePage,
+    reorderPages,
+    resetPageOrder,
   };
 }

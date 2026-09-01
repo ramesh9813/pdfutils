@@ -1,10 +1,11 @@
-import React, { useState, useRef } from 'react';
-import type { MergeItem, MergeOptions } from '../../types/pdf.types';
+import React, { useState, useRef, useMemo } from 'react';
+import type { MergeItem, MergeOptions, JoinPosition } from '../../types/pdf.types';
 import { MergeFileItem } from './MergeFileItem';
 import { Card } from '../common/Card';
 import { Button } from '../common/Button';
 import { Dropzone } from '../common/Dropzone';
-import { Plus, Trash2, ArrowRight } from 'lucide-react';
+import { Plus, Trash2, ArrowRight, Split } from 'lucide-react';
+import { buildMergeSequencePlan } from '../../services/pdfMerger';
 
 export interface MergeFileListProps {
   items: MergeItem[];
@@ -17,6 +18,12 @@ export interface MergeFileListProps {
   onMoveItem: (from: number, to: number) => void;
   onUpdateRange: (id: string, range: string) => void;
   onRotateItem: (id: string) => void;
+  onUpdateJoinPosition?: (
+    id: string,
+    joinPosition: JoinPosition,
+    targetDocumentId?: string,
+    insertAfterPage?: number
+  ) => void;
   onSetOutputFilename: (name: string) => void;
   onExecuteMerge: () => void;
 }
@@ -32,11 +39,20 @@ export const MergeFileList: React.FC<MergeFileListProps> = ({
   onMoveItem,
   onUpdateRange,
   onRotateItem,
+  onUpdateJoinPosition,
   onSetOutputFilename,
   onExecuteMerge,
 }) => {
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const mergePlan = useMemo(() => {
+    try {
+      return buildMergeSequencePlan(items);
+    } catch {
+      return [];
+    }
+  }, [items]);
 
   const handleDragStart = (e: React.DragEvent, index: number) => {
     setDraggedIndex(index);
@@ -108,18 +124,20 @@ export const MergeFileList: React.FC<MergeFileListProps> = ({
       </div>
 
       {/* List of files */}
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-2.5">
         {items.map((item, index) => (
           <MergeFileItem
             key={item.id}
             item={item}
             index={index}
             totalItems={items.length}
+            allItems={items}
             onMoveUp={(idx) => onMoveItem(idx, idx - 1)}
             onMoveDown={(idx) => onMoveItem(idx, idx + 1)}
             onRemove={onRemoveItem}
             onUpdateRange={onUpdateRange}
             onRotate={onRotateItem}
+            onUpdateJoinPosition={onUpdateJoinPosition}
             onDragStart={handleDragStart}
             onDragOver={handleDragOver}
             onDrop={handleDrop}
@@ -127,6 +145,40 @@ export const MergeFileList: React.FC<MergeFileListProps> = ({
           />
         ))}
       </div>
+
+      {/* Assembly Sequence Flow Preview Card */}
+      {items.length >= 2 && mergePlan.length > 0 && (
+        <Card className="flex flex-col gap-3 p-4 bg-sky-50/50 border border-sky-200 shadow-xs animate-fadeIn">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Split className="h-4 w-4 text-primary shrink-0" />
+              <span className="text-xs font-bold text-text-main">
+                Assembly Flow Preview (Including Middle/Inside Insertions)
+              </span>
+            </div>
+            <span className="text-xs font-mono font-bold text-primary bg-sky-100 px-2 py-0.5 rounded border border-sky-300">
+              Total {totalEstimatedPages} Pages
+            </span>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2 pt-1">
+            {mergePlan.map((chunk, idx) => (
+              <React.Fragment key={idx}>
+                {idx > 0 && <ArrowRight className="h-3.5 w-3.5 text-text-muted shrink-0" />}
+                <div className="flex items-center gap-1.5 bg-white border border-border rounded px-2.5 py-1.5 shadow-xs text-xs">
+                  <span className="font-semibold text-text-main max-w-[130px] truncate" title={chunk.fileName}>
+                    {chunk.fileName}
+                  </span>
+                  <span className="text-[11px] font-mono font-bold text-primary bg-primary/10 px-1.5 py-0.5 rounded">
+                    {chunk.pageRangeDisplay}
+                  </span>
+                  <span className="text-[10px] text-text-muted">({chunk.pageCount} pp)</span>
+                </div>
+              </React.Fragment>
+            ))}
+          </div>
+        </Card>
+      )}
 
       {/* Mini Dropzone at bottom to append more easily */}
       <Dropzone

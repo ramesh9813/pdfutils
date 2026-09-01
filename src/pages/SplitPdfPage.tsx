@@ -23,6 +23,8 @@ export const SplitPdfPage: React.FC = () => {
     getFreshBuffer,
     resetSession,
     rotatePage,
+    reorderPages,
+    resetPageOrder,
   } = usePdfSession();
 
   const {
@@ -35,6 +37,8 @@ export const SplitPdfPage: React.FC = () => {
     selectAll,
     deselectAll,
     invertSelection,
+    toggleSplitPoint,
+    clearSplitPoints,
     setCustomRanges,
     setEveryN,
     setMergeExtracted,
@@ -46,12 +50,15 @@ export const SplitPdfPage: React.FC = () => {
 
   const configPanelRef = useRef<HTMLDivElement>(null);
 
-  // Synchronize filename prefix when docInfo updates
+  // Synchronize filename prefix and default Python slice when docInfo updates
   useEffect(() => {
     if (docInfo) {
       setFilenamePrefix(docInfo.name.replace(/\.pdf$/i, ''));
+      if (options.splitPoints.length === 0 && (!options.customRanges || options.customRanges === '1:1')) {
+        setCustomRanges(`1:${docInfo.pageCount}`, docInfo.pageCount);
+      }
     }
-  }, [docInfo, setFilenamePrefix]);
+  }, [docInfo, setFilenamePrefix, setCustomRanges, options.splitPoints.length, options.customRanges]);
 
   const handleFilesSelected = (files: File[]) => {
     if (files.length > 0) {
@@ -63,36 +70,21 @@ export const SplitPdfPage: React.FC = () => {
   const handleExecuteSplit = () => {
     if (!docInfo) return;
     const freshBuf = getFreshBuffer();
-    executeSplit(freshBuf, docInfo.pageCount);
+    const pageOrderMapping = pages.map((p) => p.originalPageIndex);
+    const pageRotations: { [originalIndex: number]: number } = {};
+    pages.forEach((p) => {
+      if (p.rotation) {
+        pageRotations[p.originalPageIndex] = p.rotation;
+      }
+    });
+    executeSplit(freshBuf, docInfo.pageCount, pageOrderMapping, pageRotations);
   };
 
-  // Split from 3-dot dropdown: top to pageNumber, and pageNumber+1 to bottom
+  // Toggle split point from page's 3-dot dropdown
   const handleSplitFromHere = (pageNumber: number) => {
     if (!docInfo) return;
-    const total = docInfo.pageCount;
-    const baseName = docInfo.name.replace(/\.pdf$/i, '');
-
-    let rangesStr: string;
-    if (pageNumber < total) {
-      rangesStr = `1-${pageNumber}, ${pageNumber + 1}-${total}`;
-    } else {
-      rangesStr = `1-${pageNumber}`;
-    }
-
-    setMode('range');
-    setCustomRanges(rangesStr);
-    const splitPrefix = `${baseName}_split_p${pageNumber}`;
-    setFilenamePrefix(splitPrefix);
-
-    // Scroll to the splitting panel at the top
+    toggleSplitPoint(pageNumber, docInfo.pageCount);
     configPanelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-    // Execute split immediately with fresh buffer
-    const freshBuf = getFreshBuffer();
-    // Use timeout to let state flush
-    setTimeout(() => {
-      executeSplit(freshBuf, total);
-    }, 50);
   };
 
   // Extract single page from 3-dot dropdown
@@ -249,13 +241,19 @@ export const SplitPdfPage: React.FC = () => {
             <PagePreviewGrid
               pages={pages}
               selectedPages={options.selectedPages}
+              splitPoints={options.splitPoints}
+              splitMode={options.mode}
               onTogglePage={togglePage}
+              onToggleSplitPoint={(p) => docInfo && toggleSplitPoint(p, docInfo.pageCount)}
+              onClearSplitPoints={() => docInfo && clearSplitPoints(docInfo.pageCount)}
               onSelectAll={selectAll}
               onDeselectAll={deselectAll}
               onInvertSelection={invertSelection}
               onRotatePage={rotatePage}
               onSplitFromHere={handleSplitFromHere}
               onExtractSinglePage={handleExtractSinglePage}
+              onReorderPages={reorderPages}
+              onResetPageOrder={resetPageOrder}
               disabled={isProcessing}
             />
           </div>

@@ -24,6 +24,7 @@ export const JoinPdfPage: React.FC = () => {
     moveItem,
     updatePageRange,
     rotateItem,
+    updateJoinPosition,
     setOutputFilename,
     executeMerge,
     downloadResult,
@@ -110,6 +111,7 @@ export const JoinPdfPage: React.FC = () => {
             onMoveItem={moveItem}
             onUpdateRange={updatePageRange}
             onRotateItem={rotateItem}
+            onUpdateJoinPosition={updateJoinPosition}
             onSetOutputFilename={setOutputFilename}
             onExecuteMerge={executeMerge}
           />

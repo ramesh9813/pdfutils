@@ -111,6 +111,7 @@ export async function extractDocumentWithThumbnails(
 
       pages.push({
         pageNumber: i,
+        originalPageIndex: i - 1,
         width: viewport.width,
         height: viewport.height,
         aspectRatio: viewport.width / viewport.height,
