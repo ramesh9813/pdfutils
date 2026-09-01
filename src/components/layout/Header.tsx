@@ -14,7 +14,7 @@ export const Header: React.FC = () => {
           <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-border bg-bg-subtle text-primary shadow-2xs">
             <FileText className="h-5 w-5" />
           </div>
-          <div className="flex flex-col">
+          <div className="hidden sm:flex flex-col">
             <span className="text-base font-bold tracking-tight text-text-main leading-none">
               PDF<span className="text-primary">Utils</span>
             </span>
@@ -30,19 +30,20 @@ export const Header: React.FC = () => {
             <span>100% Private</span>
           </div>
 
-          {/* Mode (Light / Dark) Button */}
+          {/* Mode (Light / Dark) Button - Icon only on mobile */}
           <button
             type="button"
             onClick={toggleTheme}
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold border border-border bg-bg-surface hover:border-primary/50 hover:bg-bg-subtle text-text-main shadow-2xs transition-colors cursor-pointer"
+            className="flex items-center justify-center gap-1.5 p-2 sm:px-2.5 sm:py-1.5 rounded-lg text-xs font-semibold border border-border bg-bg-surface hover:border-primary/50 hover:bg-bg-subtle text-text-main shadow-2xs transition-colors cursor-pointer"
             title={`Switch to ${theme === 'light' ? 'Dark' : 'Light'} Mode`}
+            aria-label="Toggle Theme Mode"
           >
             {theme === 'light' ? (
-              <Moon className="h-3.5 w-3.5 text-primary" />
+              <Moon className="h-4 w-4 text-primary" />
             ) : (
-              <Sun className="h-3.5 w-3.5 text-primary" />
+              <Sun className="h-4 w-4 text-primary" />
             )}
-            <span>Mode</span>
+            <span className="hidden sm:inline">Mode</span>
           </button>
 
           {/* Single Header Button that expands all options */}

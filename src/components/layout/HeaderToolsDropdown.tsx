@@ -49,15 +49,17 @@ export const HeaderToolsDropdown: React.FC = () => {
       <button
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
-        className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold border transition-all cursor-pointer shadow-2xs ${
+        className={`flex items-center justify-center gap-1.5 p-2 sm:px-3 sm:py-1.5 rounded-lg text-xs sm:text-sm font-semibold border transition-all cursor-pointer shadow-2xs ${
           isOpen
             ? 'bg-primary text-white border-primary shadow-xs'
             : 'bg-bg-surface text-text-main border-border hover:border-primary/50 hover:bg-bg-subtle'
         }`}
+        title="Tools & Navigation"
+        aria-label="Tools and Navigation"
       >
         <LayoutGrid className="h-4 w-4 text-primary group-hover:text-white" />
-        <span>Tools & Navigation</span>
-        <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+        <span className="hidden sm:inline">Tools</span>
+        <ChevronDown className={`hidden sm:inline h-3.5 w-3.5 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
       {isOpen && (
