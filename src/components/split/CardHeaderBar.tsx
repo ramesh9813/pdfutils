@@ -32,7 +32,7 @@ export const CardHeaderBar: React.FC<CardHeaderBarProps> = ({
 }) => {
   return (
     <div
-      className={`flex items-center justify-between px-2 py-1.5 border-b text-xs z-10 transition-colors ${
+      className={`flex items-center justify-between px-2 py-1.5 border-b text-xs z-10 transition-colors rounded-t-lg ${
         isSplitPoint
           ? 'bg-blue-600 text-white border-blue-700'
           : 'bg-bg-subtle/80 text-text-main border-border'

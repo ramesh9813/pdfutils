@@ -30,7 +30,7 @@ export const CardFooterBar: React.FC<CardFooterBarProps> = ({
   };
 
   return (
-    <div className="flex items-center justify-between p-1.5 bg-bg-surface border-t border-border z-10">
+    <div className="flex items-center justify-between p-1.5 bg-bg-surface border-t border-border z-10 rounded-b-lg">
       <button
         type="button"
         onClick={(e) => {

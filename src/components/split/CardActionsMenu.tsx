@@ -61,8 +61,23 @@ export const CardActionsMenu: React.FC<CardActionsMenuProps> = ({
 
       {isOpen && (
         <>
-          <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
-          <div className="absolute right-0 top-full mt-1 w-52 rounded-md border border-border bg-bg-surface py-1 shadow-lg z-50 text-xs">
+          <div
+            className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs sm:bg-transparent sm:backdrop-blur-none sm:z-40"
+            onClick={() => setIsOpen(false)}
+          />
+          <div className="fixed inset-x-0 bottom-0 z-50 sm:absolute sm:inset-auto sm:right-0 sm:top-full sm:mt-1 sm:w-52 rounded-t-2xl sm:rounded-md border-t sm:border border-border bg-bg-surface p-3 sm:py-1 sm:px-0 shadow-2xl sm:shadow-lg text-xs animate-in slide-in-from-bottom sm:animate-none">
+            {/* Mobile Header Bar */}
+            <div className="flex items-center justify-between pb-2 mb-1.5 border-b border-border sm:hidden">
+              <span className="font-bold text-sm text-text-main">Page {pageNumber} Actions</span>
+              <button
+                type="button"
+                onClick={() => setIsOpen(false)}
+                className="text-xs text-text-sub font-semibold hover:text-primary px-2 py-0.5"
+              >
+                Close
+              </button>
+            </div>
+
             {onToggleSplitPoint && (
               <button
                 type="button"
@@ -70,9 +85,9 @@ export const CardActionsMenu: React.FC<CardActionsMenuProps> = ({
                   setIsOpen(false);
                   onToggleSplitPoint(pageNumber);
                 }}
-                className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-text-main hover:bg-bg-subtle"
+                className="flex w-full items-center gap-2.5 px-3 py-2.5 sm:py-1.5 text-left text-sm sm:text-xs text-text-main hover:bg-bg-subtle rounded-md sm:rounded-none"
               >
-                <Scissors className="h-3.5 w-3.5 text-primary" />
+                <Scissors className="h-4 w-4 sm:h-3.5 sm:w-3.5 text-primary" />
                 <span>{isSplitPoint ? 'Remove Cut' : 'Cut After Page'}</span>
               </button>
             )}
@@ -84,9 +99,9 @@ export const CardActionsMenu: React.FC<CardActionsMenuProps> = ({
                   setIsOpen(false);
                   onHoldPickup(pageNumber);
                 }}
-                className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-text-main hover:bg-bg-subtle"
+                className="flex w-full items-center gap-2.5 px-3 py-2.5 sm:py-1.5 text-left text-sm sm:text-xs text-text-main hover:bg-bg-subtle rounded-md sm:rounded-none"
               >
-                <Move className="h-3.5 w-3.5 text-primary" />
+                <Move className="h-4 w-4 sm:h-3.5 sm:w-3.5 text-primary" />
                 <span>Pick Up Page</span>
               </button>
             )}
@@ -98,9 +113,9 @@ export const CardActionsMenu: React.FC<CardActionsMenuProps> = ({
                   setIsOpen(false);
                   onMoveLeft(pageNumber);
                 }}
-                className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-text-main hover:bg-bg-subtle"
+                className="flex w-full items-center gap-2.5 px-3 py-2.5 sm:py-1.5 text-left text-sm sm:text-xs text-text-main hover:bg-bg-subtle rounded-md sm:rounded-none"
               >
-                <ArrowLeft className="h-3.5 w-3.5" />
+                <ArrowLeft className="h-4 w-4 sm:h-3.5 sm:w-3.5" />
                 <span>Move Left</span>
               </button>
             )}
@@ -112,9 +127,9 @@ export const CardActionsMenu: React.FC<CardActionsMenuProps> = ({
                   setIsOpen(false);
                   onMoveRight(pageNumber);
                 }}
-                className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-text-main hover:bg-bg-subtle"
+                className="flex w-full items-center gap-2.5 px-3 py-2.5 sm:py-1.5 text-left text-sm sm:text-xs text-text-main hover:bg-bg-subtle rounded-md sm:rounded-none"
               >
-                <ArrowRight className="h-3.5 w-3.5" />
+                <ArrowRight className="h-4 w-4 sm:h-3.5 sm:w-3.5" />
                 <span>Move Right</span>
               </button>
             )}
@@ -123,9 +138,9 @@ export const CardActionsMenu: React.FC<CardActionsMenuProps> = ({
               <button
                 type="button"
                 onClick={handleCustomMove}
-                className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-text-main hover:bg-bg-subtle border-t border-border"
+                className="flex w-full items-center gap-2.5 px-3 py-2.5 sm:py-1.5 text-left text-sm sm:text-xs text-text-main hover:bg-bg-subtle border-t border-border rounded-md sm:rounded-none"
               >
-                <Move className="h-3.5 w-3.5 text-text-sub" />
+                <Move className="h-4 w-4 sm:h-3.5 sm:w-3.5 text-text-sub" />
                 <span>Move to Position...</span>
               </button>
             )}
@@ -137,9 +152,9 @@ export const CardActionsMenu: React.FC<CardActionsMenuProps> = ({
                   setIsOpen(false);
                   onExtractSinglePage(pageNumber);
                 }}
-                className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-text-main hover:bg-bg-subtle border-t border-border"
+                className="flex w-full items-center gap-2.5 px-3 py-2.5 sm:py-1.5 text-left text-sm sm:text-xs text-text-main hover:bg-bg-subtle border-t border-border rounded-md sm:rounded-none"
               >
-                <FileDown className="h-3.5 w-3.5 text-text-sub" />
+                <FileDown className="h-4 w-4 sm:h-3.5 sm:w-3.5 text-text-sub" />
                 <span>Extract Page</span>
               </button>
             )}

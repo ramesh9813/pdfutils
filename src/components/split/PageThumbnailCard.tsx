@@ -130,7 +130,7 @@ export const PageThumbnailCard: React.FC<PageThumbnailCardProps> = ({
       onPointerLeave={clearHold}
       onClick={handleClick}
       onDoubleClick={handleDoubleClick}
-      className={`group relative flex flex-col rounded-lg border overflow-hidden shadow-xs select-none cursor-pointer transition-all duration-150 ${
+      className={`group relative flex flex-col rounded-lg border shadow-xs select-none cursor-pointer transition-all duration-150 ${
         isHeld
           ? 'border-amber-500 ring-2 ring-amber-500 shadow-md opacity-90 bg-bg-surface'
           : isDropTarget
