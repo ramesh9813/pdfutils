@@ -1,9 +1,9 @@
 import React, { useState, useRef } from 'react';
 import type { PdfPageDetail } from '../../types/pdf.types';
-import { CardActionsMenu } from './CardActionsMenu';
+import { CardHeaderBar } from './CardHeaderBar';
 import { CardOverlayIndicators } from './CardOverlayIndicators';
 import { CardFooterBar } from './CardFooterBar';
-import { RotateCw, FileText } from 'lucide-react';
+import { FileText } from 'lucide-react';
 
 export interface PageThumbnailCardProps {
   page: PdfPageDetail;
@@ -12,6 +12,7 @@ export interface PageThumbnailCardProps {
   isSplitPoint?: boolean;
   splitIndex?: number;
   isHeld?: boolean;
+  isDropTarget?: boolean;
   disabled?: boolean;
   sourceBuffer?: ArrayBuffer | null;
   baseDocName?: string;
@@ -34,6 +35,7 @@ export const PageThumbnailCard: React.FC<PageThumbnailCardProps> = ({
   isSplitPoint = false,
   splitIndex = -1,
   isHeld = false,
+  isDropTarget = false,
   disabled = false,
   sourceBuffer,
   baseDocName,
@@ -67,9 +69,9 @@ export const PageThumbnailCard: React.FC<PageThumbnailCardProps> = ({
     holdStartTimeRef.current = Date.now();
     holdIntervalRef.current = setInterval(() => {
       const elapsed = Date.now() - holdStartTimeRef.current;
-      const pct = Math.min(100, Math.round((elapsed / 1200) * 100));
+      const pct = Math.min(100, Math.round((elapsed / 1000) * 100));
       setHoldProgress(pct);
-      if (elapsed >= 1200) {
+      if (elapsed >= 1000) {
         clearHold();
         didTriggerHoldRef.current = true;
         onHoldStart?.(page.pageNumber);
@@ -82,7 +84,7 @@ export const PageThumbnailCard: React.FC<PageThumbnailCardProps> = ({
       didTriggerHoldRef.current = false;
       return;
     }
-    if (onDropOnPage && !isHeld) {
+    if (isDropTarget && onDropOnPage) {
       onDropOnPage(page.pageNumber);
       return;
     }
@@ -99,12 +101,7 @@ export const PageThumbnailCard: React.FC<PageThumbnailCardProps> = ({
       } else {
         onPreviewFull?.(page);
       }
-    }, 260);
-  };
-
-  const handleRotate = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    onRotate?.(page.pageNumber);
+    }, 250);
   };
 
   return (
@@ -114,50 +111,30 @@ export const PageThumbnailCard: React.FC<PageThumbnailCardProps> = ({
       onPointerLeave={clearHold}
       onClick={handleClick}
       className={`group relative flex flex-col rounded-lg border bg-bg-surface overflow-hidden shadow-xs select-none cursor-pointer transition-all duration-150 ${
-        isSplitPoint
+        isHeld
+          ? 'border-amber-500 ring-2 ring-amber-500 shadow-md opacity-90'
+          : isDropTarget
+          ? 'border-amber-400 ring-2 ring-amber-300 ring-dashed hover:ring-amber-500 bg-amber-50/20'
+          : isSplitPoint
           ? 'border-blue-600 ring-2 ring-blue-500 shadow-md'
           : isSelected
           ? 'border-primary ring-2 ring-primary/40'
           : 'border-border hover:border-primary/50'
       }`}
     >
-      {/* Top Header Bar */}
-      <div className="flex items-center justify-between px-2.5 py-1.5 bg-bg-subtle/80 border-b border-border text-xs z-10">
-        <span className="font-bold font-mono text-text-main">
-          p.{page.pageNumber}
-          {page.originalPageIndex !== page.pageNumber - 1 && (
-            <span className="text-[10px] text-amber-600 font-semibold ml-1">
-              (orig. {page.originalPageIndex + 1})
-            </span>
-          )}
-        </span>
-
-        {/* Top-Right: Rotate 90° tab/button & 3-dot menu */}
-        <div className="flex items-center gap-1">
-          <button
-            type="button"
-            onClick={handleRotate}
-            title="Rotate 90° Clockwise"
-            className="flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium bg-white hover:bg-sky-50 text-text-sub hover:text-primary border border-border transition-colors shadow-2xs"
-          >
-            <RotateCw className="h-2.5 w-2.5" />
-            <span>Rotate 90°</span>
-          </button>
-
-          <CardActionsMenu
-            pageNumber={page.pageNumber}
-            totalCount={totalCount}
-            isSplitPoint={isSplitPoint}
-            disabled={disabled}
-            onToggleSplitPoint={onToggleSplitPoint}
-            onMoveLeft={onMoveLeft}
-            onMoveRight={onMoveRight}
-            onMoveToPosition={onMoveToPosition}
-            onHoldPickup={onHoldStart}
-            onExtractSinglePage={onExtractSinglePage}
-          />
-        </div>
-      </div>
+      <CardHeaderBar
+        page={page}
+        totalCount={totalCount}
+        isSplitPoint={isSplitPoint}
+        disabled={disabled}
+        onRotate={onRotate}
+        onMoveLeft={onMoveLeft}
+        onMoveRight={onMoveRight}
+        onToggleSplitPoint={onToggleSplitPoint}
+        onMoveToPosition={onMoveToPosition}
+        onHoldStart={onHoldStart}
+        onExtractSinglePage={onExtractSinglePage}
+      />
 
       {/* Thumbnail Area */}
       <div className="relative aspect-[3/4] w-full bg-slate-100/50 flex items-center justify-center overflow-hidden">

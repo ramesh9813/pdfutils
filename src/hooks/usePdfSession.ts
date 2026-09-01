@@ -43,25 +43,33 @@ export function usePdfSession() {
       };
 
       // Stream document parsing and progressive thumbnail generation
-      const initialPages = await extractDocumentWithThumbnails(
+      const finalPages = await extractDocumentWithThumbnails(
         masterBytes,
         280,
         (pageNumber, thumbnailUrl) => {
           if (currentAbortController.signal.aborted) return;
           setPages((prev) =>
             prev.map((p) =>
-              p.pageNumber === pageNumber
+              p.originalPageIndex === pageNumber - 1
                 ? { ...p, thumbnailUrl, isLoadingThumbnail: false }
                 : p
             )
           );
         },
-        currentAbortController.signal
+        currentAbortController.signal,
+        (initialPages) => {
+          if (currentAbortController.signal.aborted) return;
+          newDocInfo.pageCount = initialPages.length;
+          setDocInfo({ ...newDocInfo });
+          setPages(initialPages);
+          setIsLoading(false);
+        }
       );
 
-      newDocInfo.pageCount = initialPages.length;
-      setPages(initialPages);
-      setDocInfo(newDocInfo);
+      if (!currentAbortController.signal.aborted) {
+        newDocInfo.pageCount = finalPages.length;
+        setDocInfo(newDocInfo);
+      }
     } catch (err: unknown) {
       console.error('Error loading PDF:', err);
       const msg = err instanceof Error ? err.message : 'Failed to parse PDF document';
@@ -158,6 +166,16 @@ export function usePdfSession() {
     });
   }, []);
 
+  const reversePageOrder = useCallback(() => {
+    setPages((prev) => {
+      const reversed = [...prev].reverse();
+      return reversed.map((p, idx) => ({
+        ...p,
+        pageNumber: idx + 1,
+      }));
+    });
+  }, []);
+
   return {
     docInfo,
     pages,
@@ -168,6 +186,7 @@ export function usePdfSession() {
     resetSession,
     rotatePage,
     reorderPages,
+    reversePageOrder,
     resetPageOrder,
   };
 }

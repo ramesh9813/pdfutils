@@ -112,6 +112,7 @@ export const PagePreviewGrid: React.FC<PagePreviewGridProps> = ({
           const splitIdx = splitPoints.indexOf(page.pageNumber);
           const isSplitPoint = splitIdx !== -1;
           const isHeld = heldIndex === index;
+          const isDropTarget = heldIndex !== null && heldIndex !== index;
 
           return (
             <PageThumbnailCard
@@ -122,6 +123,7 @@ export const PagePreviewGrid: React.FC<PagePreviewGridProps> = ({
               isSplitPoint={isSplitPoint}
               splitIndex={splitIdx}
               isHeld={isHeld}
+              isDropTarget={isDropTarget}
               disabled={disabled}
               sourceBuffer={sourceBuffer}
               baseDocName={baseDocName}

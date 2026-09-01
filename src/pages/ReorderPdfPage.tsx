@@ -7,10 +7,7 @@ import { PagePreviewGrid } from '../components/split/PagePreviewGrid';
 import { Dropzone } from '../components/common/Dropzone';
 import { Button } from '../components/common/Button';
 import saveAs from 'file-saver';
-import {
-  RotateCcw,
-  ArrowUpDown,
-} from 'lucide-react';
+import { RotateCcw, ArrowUpDown, Loader2, AlertCircle } from 'lucide-react';
 
 export const ReorderPdfPage: React.FC = () => {
   const { sharedFile, clearSharedFile } = useSharedPdf();
@@ -18,11 +15,13 @@ export const ReorderPdfPage: React.FC = () => {
     docInfo,
     pages,
     isLoading,
+    error,
     loadFile,
     getFreshBuffer,
     resetSession,
     rotatePage,
     reorderPages,
+    reversePageOrder,
     resetPageOrder,
   } = usePdfSession();
 
@@ -37,13 +36,6 @@ export const ReorderPdfPage: React.FC = () => {
   const handleFilesSelected = (files: File[]) => {
     if (files.length > 0) {
       loadFile(files[0]);
-    }
-  };
-
-  const handleReverseOrder = () => {
-    const total = pages.length;
-    for (let i = 0; i < Math.floor(total / 2); i++) {
-      reorderPages(i, total - 1 - i);
     }
   };
 
@@ -83,7 +75,7 @@ export const ReorderPdfPage: React.FC = () => {
             Reorder Pages
           </h1>
           <p className="text-xs text-text-sub mt-0.5">
-            Hold to pick up and drag pages, or use toolbar.
+            Hold or click arrows to move pages, or use reverse.
           </p>
         </div>
 
@@ -100,6 +92,20 @@ export const ReorderPdfPage: React.FC = () => {
           </Button>
         )}
       </div>
+
+      {error && (
+        <div className="flex items-center gap-2 rounded border border-danger/40 bg-rose-50 p-3 text-xs text-danger max-w-2xl mx-auto w-full">
+          <AlertCircle className="h-4 w-4 shrink-0" />
+          <span>{error}</span>
+        </div>
+      )}
+
+      {isLoading && !docInfo && (
+        <div className="flex flex-col items-center justify-center py-16 gap-3 text-text-sub">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <span className="text-sm font-semibold">Reading PDF document...</span>
+        </div>
+      )}
 
       {/* Dropzone */}
       {!docInfo && !isLoading && (
@@ -120,7 +126,7 @@ export const ReorderPdfPage: React.FC = () => {
             pageCount={pages.length}
             isModified={isModified}
             isProcessing={isSaving}
-            onReverse={handleReverseOrder}
+            onReverse={reversePageOrder}
             onReset={resetPageOrder}
             onSave={handleSaveReordered}
           />
@@ -130,6 +136,8 @@ export const ReorderPdfPage: React.FC = () => {
             selectedPages={[]}
             splitPoints={[]}
             splitMode="single"
+            sourceBuffer={getFreshBuffer()}
+            baseDocName={docInfo.name}
             onTogglePage={() => {}}
             onToggleSplitPoint={() => {}}
             onClearSplitPoints={() => {}}

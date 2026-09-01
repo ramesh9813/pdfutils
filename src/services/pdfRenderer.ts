@@ -95,7 +95,8 @@ export async function extractDocumentWithThumbnails(
   source: ArrayBuffer | Uint8Array,
   maxWidth: number = 280,
   onThumbnailReady?: (pageNumber: number, thumbnailUrl: string) => void,
-  signal?: AbortSignal
+  signal?: AbortSignal,
+  onInitialPagesReady?: (pages: PdfPageDetail[]) => void
 ): Promise<PdfPageDetail[]> {
   const doc = await loadPdfDocument(source);
   const pages: PdfPageDetail[] = [];
@@ -118,6 +119,11 @@ export async function extractDocumentWithThumbnails(
         rotation: viewport.rotation,
         isLoadingThumbnail: true,
       });
+    }
+
+    // Immediately notify caller of page structure so UI renders in <50ms
+    if (!signal?.aborted && onInitialPagesReady) {
+      onInitialPagesReady([...pages]);
     }
 
     // 2. Progressive thumbnail rendering pass
