@@ -83,7 +83,7 @@ export const UtilitiesHubPage: React.FC = () => {
   ];
 
   return (
-    <div className="flex flex-col gap-6 max-w-5xl mx-auto w-full py-4 pb-12">
+    <div className="flex flex-col gap-6 max-w-7xl mx-auto w-full py-4 pb-12">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-4">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold text-text-main flex items-center gap-2">
@@ -109,7 +109,7 @@ export const UtilitiesHubPage: React.FC = () => {
       />
 
       {/* 2. GRID OF TOOL CARDS */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {tools.map((tool) => (
           <Card key={tool.path} className="flex flex-col justify-between p-5 hover:border-primary/60 transition-colors">
             <div>
