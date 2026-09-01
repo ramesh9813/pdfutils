@@ -1,15 +1,30 @@
 import React from 'react';
-import type { FromFormat, ToFormat } from './convertTypes';
+import {
+  SourceFormat,
+  TargetFormat,
+  TARGET_OPTIONS_MAP,
+} from './convertTypes';
 import { Card } from '../../components/common/Card';
 import { RefreshCw } from 'lucide-react';
 
 export interface ConvertFormatSelectorProps {
-  fromFormat: FromFormat;
-  toFormat: ToFormat;
+  fromFormat: SourceFormat;
+  toFormat: TargetFormat;
   disabled?: boolean;
-  onFromChange: (val: FromFormat) => void;
-  onToChange: (val: ToFormat) => void;
+  onFromChange: (val: SourceFormat) => void;
+  onToChange: (val: TargetFormat) => void;
 }
+
+const FORMAT_LABELS: Record<string, string> = {
+  pdf: 'PDF Document (.pdf)',
+  docx: 'Word Document (.docx)',
+  csv: 'Excel / CSV (.csv)',
+  md: 'Markdown (.md)',
+  images: 'Images (.jpg, .png)',
+  jpg: 'JPG Images (.jpg)',
+  png: 'PNG Images (.png)',
+  txt: 'Plain Text (.txt)',
+};
 
 export const ConvertFormatSelector: React.FC<ConvertFormatSelectorProps> = ({
   fromFormat,
@@ -18,12 +33,13 @@ export const ConvertFormatSelector: React.FC<ConvertFormatSelectorProps> = ({
   onFromChange,
   onToChange,
 }) => {
-  const handleFromChange = (newFrom: FromFormat) => {
+  const availableTargets = TARGET_OPTIONS_MAP[fromFormat] || ['pdf'];
+
+  const handleFromChange = (newFrom: SourceFormat) => {
     onFromChange(newFrom);
-    if (newFrom === 'pdf') {
-      onToChange('jpg');
-    } else {
-      onToChange('pdf');
+    const targets = TARGET_OPTIONS_MAP[newFrom] || ['pdf'];
+    if (!targets.includes(toFormat)) {
+      onToChange(targets[0]);
     }
   };
 
@@ -35,8 +51,8 @@ export const ConvertFormatSelector: React.FC<ConvertFormatSelectorProps> = ({
             <RefreshCw className="h-4 w-4" />
           </div>
           <div>
-            <h3 className="text-xs sm:text-sm font-bold text-text-main">Conversion Format</h3>
-            <p className="text-[11px] text-text-muted">Select input & output.</p>
+            <h3 className="text-xs sm:text-sm font-bold text-text-main">Universal Converter</h3>
+            <p className="text-[11px] text-text-muted">Convert between formats.</p>
           </div>
         </div>
 
@@ -51,32 +67,31 @@ export const ConvertFormatSelector: React.FC<ConvertFormatSelectorProps> = ({
           <select
             value={fromFormat}
             disabled={disabled}
-            onChange={(e) => handleFromChange(e.target.value as FromFormat)}
+            onChange={(e) => handleFromChange(e.target.value as SourceFormat)}
             className="rounded-lg border border-border bg-bg-surface px-3 py-2 text-xs font-medium text-text-main focus:border-primary focus:outline-hidden"
           >
-            <option value="pdf">PDF Document (.pdf)</option>
+            <option value="pdf">PDF (.pdf)</option>
+            <option value="docx">Word (.docx)</option>
+            <option value="csv">Excel / CSV (.csv, .xlsx)</option>
+            <option value="md">Markdown (.md)</option>
             <option value="images">Images (.jpg, .png)</option>
+            <option value="txt">Plain Text (.txt)</option>
           </select>
         </div>
 
         <div className="flex flex-col gap-1">
-          <label className="text-xs font-bold text-text-main">To (Output)</label>
+          <label className="text-xs font-bold text-text-main">To (Target)</label>
           <select
             value={toFormat}
             disabled={disabled}
-            onChange={(e) => onToChange(e.target.value as ToFormat)}
+            onChange={(e) => onToChange(e.target.value as TargetFormat)}
             className="rounded-lg border border-border bg-bg-surface px-3 py-2 text-xs font-medium text-text-main focus:border-primary focus:outline-hidden"
           >
-            {fromFormat === 'pdf' ? (
-              <>
-                <option value="jpg">JPG Images (.jpg)</option>
-                <option value="png">PNG Images (.png)</option>
-                <option value="webp">WEBP Images (.webp)</option>
-                <option value="txt">Plain Text (.txt)</option>
-              </>
-            ) : (
-              <option value="pdf">PDF Document (.pdf)</option>
-            )}
+            {availableTargets.map((tgt) => (
+              <option key={tgt} value={tgt}>
+                {FORMAT_LABELS[tgt] || tgt.toUpperCase()}
+              </option>
+            ))}
           </select>
         </div>
       </div>

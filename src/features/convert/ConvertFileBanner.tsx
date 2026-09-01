@@ -1,11 +1,11 @@
 import React from 'react';
 import { Button } from '../../components/common/Button';
 import { FileText } from 'lucide-react';
-import type { ToFormat } from './convertTypes';
+import type { TargetFormat } from './convertTypes';
 
 export interface ConvertFileBannerProps {
   files: File[];
-  toFormat: ToFormat;
+  toFormat: TargetFormat;
   onReset: () => void;
 }
 

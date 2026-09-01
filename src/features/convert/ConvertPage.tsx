@@ -1,24 +1,21 @@
 import React, { useState } from 'react';
 import saveAs from 'file-saver';
-import { useSharedPdf } from '../context/PdfContext';
-import { ConvertFormatSelector } from '../features/convert/ConvertFormatSelector';
-import { ConvertFileBanner } from '../features/convert/ConvertFileBanner';
-import type { FromFormat, ToFormat, ConvertResult } from '../features/convert/convertTypes';
-import {
-  convertPdfToImages,
-  convertPdfToText,
-  convertImagesToPdf,
-} from '../features/convert/convertEngine';
-import { Dropzone } from '../components/common/Dropzone';
-import { Button } from '../components/common/Button';
-import { ProgressBar } from '../components/common/ProgressBar';
-import type { ProgressState } from '../types/pdf.types';
+import { useSharedPdf } from '../../context/PdfContext';
+import { ConvertFormatSelector } from './ConvertFormatSelector';
+import { ConvertFileBanner } from './ConvertFileBanner';
+import type { SourceFormat, TargetFormat, ConvertResult } from './convertTypes';
+import { FORMAT_ACCEPT_MAP } from './convertTypes';
+import { executeConversion } from './convertEngine';
+import { Dropzone } from '../../components/common/Dropzone';
+import { Button } from '../../components/common/Button';
+import { ProgressBar } from '../../components/common/ProgressBar';
+import type { ProgressState } from '../../types/pdf.types';
 import { RefreshCw, Download, RotateCcw, CheckCircle2 } from 'lucide-react';
 
-export const ConvertPdfPage: React.FC = () => {
+export const ConvertPage: React.FC = () => {
   const { sharedFile, clearSharedFile } = useSharedPdf();
-  const [fromFormat, setFromFormat] = useState<FromFormat>('pdf');
-  const [toFormat, setToFormat] = useState<ToFormat>('jpg');
+  const [fromFormat, setFromFormat] = useState<SourceFormat>('pdf');
+  const [toFormat, setToFormat] = useState<TargetFormat>('jpg');
   const [files, setFiles] = useState<File[]>(sharedFile ? [sharedFile] : []);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [result, setResult] = useState<ConvertResult | null>(null);
@@ -29,57 +26,46 @@ export const ConvertPdfPage: React.FC = () => {
     message: '',
   });
 
-  const isPdfSource = fromFormat === 'pdf';
+  const validateFiles = (selected: File[], source: SourceFormat): File[] => {
+    if (source === 'pdf') {
+      return selected.filter((f) => f.type === 'application/pdf' || f.name.toLowerCase().endsWith('.pdf'));
+    }
+    if (source === 'docx') {
+      return selected.filter((f) => f.name.toLowerCase().endsWith('.docx'));
+    }
+    if (source === 'csv') {
+      return selected.filter((f) => /\.(csv|xlsx)$/i.test(f.name));
+    }
+    if (source === 'md') {
+      return selected.filter((f) => /\.(md|markdown|txt)$/i.test(f.name));
+    }
+    if (source === 'images') {
+      return selected.filter((f) => f.type.startsWith('image/') || /\.(jpe?g|png|webp)$/i.test(f.name));
+    }
+    return selected;
+  };
 
   const handleFilesSelected = (selected: File[]) => {
     setErrorMsg(null);
     setResult(null);
 
-    if (isPdfSource) {
-      const valid = selected.filter(
-        (f) => f.type === 'application/pdf' || f.name.toLowerCase().endsWith('.pdf')
-      );
-      if (valid.length === 0) {
-        setErrorMsg('Only PDF files allowed for this conversion.');
-        return;
-      }
-      setFiles([valid[0]]);
-    } else {
-      const valid = selected.filter(
-        (f) => f.type.startsWith('image/') || /\.(jpe?g|png|webp)$/i.test(f.name)
-      );
-      if (valid.length === 0) {
-        setErrorMsg('Only JPG/PNG images allowed.');
-        return;
-      }
-      setFiles(valid);
+    const valid = validateFiles(selected, fromFormat);
+    if (valid.length === 0) {
+      setErrorMsg(`Only ${fromFormat.toUpperCase()} files allowed for this conversion.`);
+      return;
     }
+    setFiles(fromFormat === 'images' ? valid : [valid[0]]);
   };
 
   const handleExecute = async () => {
     if (files.length === 0) return;
     setErrorMsg(null);
-    setProgress({ status: 'processing', current: 10, total: 100, message: 'Converting...' });
+    setProgress({ status: 'processing', current: 15, total: 100, message: 'Converting...' });
 
     try {
-      let out: ConvertResult;
-      const baseName = files[0].name.replace(/\.[^.]+$/, '');
-
-      if (fromFormat === 'pdf') {
-        const buf = await files[0].arrayBuffer();
-        if (toFormat === 'txt') {
-          out = await convertPdfToText(buf, baseName);
-        } else {
-          out = await convertPdfToImages(buf, toFormat as any, baseName, (p) =>
-            setProgress((prev) => ({ ...prev, current: p }))
-          );
-        }
-      } else {
-        out = await convertImagesToPdf(files, (p) =>
-          setProgress((prev) => ({ ...prev, current: p }))
-        );
-      }
-
+      const out = await executeConversion(files, fromFormat, toFormat, (p) =>
+        setProgress((prev) => ({ ...prev, current: p }))
+      );
       setResult(out);
       setProgress({ status: 'completed', current: 100, total: 100, message: 'Done!' });
       saveAs(out.blob, out.filename);
@@ -104,9 +90,9 @@ export const ConvertPdfPage: React.FC = () => {
         <div>
           <h1 className="text-xl sm:text-2xl font-bold text-text-main flex items-center gap-2">
             <RefreshCw className="h-5 w-5 text-primary" />
-            Convert PDF & Images
+            Universal File Converter
           </h1>
-          <p className="text-xs text-text-sub mt-0.5">In-browser document & image conversion.</p>
+          <p className="text-xs text-text-sub mt-0.5">PDF ↔ Word, Excel, Markdown, and Images.</p>
         </div>
         {files.length > 0 && (
           <Button type="button" variant="outline" size="sm" onClick={handleReset} leftIcon={<RotateCcw className="h-3.5 w-3.5" />}>
@@ -135,20 +121,15 @@ export const ConvertPdfPage: React.FC = () => {
 
       {files.length === 0 ? (
         <Dropzone
-          multiple={!isPdfSource}
-          accept={isPdfSource ? '.pdf,application/pdf' : 'image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp'}
-          title={isPdfSource ? 'Drop PDF here' : 'Drop Images here'}
-          subtitle={isPdfSource ? 'Strictly PDF files accepted.' : 'JPG and PNG images accepted.'}
+          multiple={fromFormat === 'images'}
+          accept={FORMAT_ACCEPT_MAP[fromFormat]}
+          title={`Drop ${fromFormat.toUpperCase()} here`}
+          subtitle={`Strictly ${fromFormat.toUpperCase()} files accepted.`}
           onFilesSelected={handleFilesSelected}
         />
       ) : (
         <div className="flex flex-col gap-4">
-          <ConvertFileBanner
-            files={files}
-            toFormat={toFormat}
-            onReset={handleReset}
-          />
-
+          <ConvertFileBanner files={files} toFormat={toFormat} onReset={handleReset} />
           {progress.status !== 'idle' && <ProgressBar progress={progress} />}
 
           {result && (
@@ -169,7 +150,7 @@ export const ConvertPdfPage: React.FC = () => {
             size="md"
             onClick={handleExecute}
             disabled={progress.status === 'processing'}
-            className="w-full py-2.5 text-xs font-semibold"
+            className="w-full py-2.5 text-xs font-semibold cursor-pointer"
           >
             {progress.status === 'processing'
               ? `Converting... (${progress.current}%)`
