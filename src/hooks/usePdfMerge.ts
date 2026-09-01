@@ -9,8 +9,17 @@ import type {
 } from '../types/pdf.types';
 import { getPdfPageCount, renderPageThumbnail } from '../services/pdfRenderer';
 import { mergePdfs, buildMergeAssembly } from '../services/pdfMerger';
+import { useSettings } from '../context/SettingsContext';
 
 export function usePdfMerge() {
+  const { settings } = useSettings();
+  const defaultPos: JoinPosition =
+    settings.merge.defaultPosition === 'start'
+      ? 'beginning'
+      : settings.merge.defaultPosition === 'inside'
+      ? 'inside'
+      : 'end';
+
   const [items, setItems] = useState<MergeItem[]>([]);
   const [options, setOptions] = useState<MergeOptions>({
     outputFilename: 'merged-documents.pdf',
@@ -45,22 +54,21 @@ export function usePdfMerge() {
           pageCount,
           pageRange: 'all',
           rotationOffset: 0,
+          joinPosition: defaultPos,
         };
 
         setItems((prev) => [...prev, newItem]);
 
         renderPageThumbnail(masterBytes, 1, 200)
           .then((thumb) => {
-            setItems((prev) =>
-              prev.map((it) => (it.id === id ? { ...it, thumbnailUrl: thumb } : it))
-            );
+            setItems((prev) => prev.map((it) => (it.id === id ? { ...it, thumbnailUrl: thumb } : it)));
           })
           .catch((err) => console.error('Error rendering thumbnail:', err));
       } catch (err) {
         console.error('Error reading PDF file for merge:', err);
       }
     }
-  }, []);
+  }, [defaultPos]);
 
   const removeItem = useCallback((id: string) => {
     setItems((prev) => prev.filter((item) => item.id !== id));
@@ -68,53 +76,47 @@ export function usePdfMerge() {
 
   const clearItems = useCallback(() => {
     setItems([]);
-    setResult(null);
   }, []);
 
   const moveItem = useCallback((fromIndex: number, toIndex: number) => {
     setItems((prev) => {
-      if (fromIndex < 0 || fromIndex >= prev.length || toIndex < 0 || toIndex >= prev.length) {
-        return prev;
-      }
-      const updated = [...prev];
-      const [moved] = updated.splice(fromIndex, 1);
-      updated.splice(toIndex, 0, moved);
-      return updated;
+      if (toIndex < 0 || toIndex >= prev.length) return prev;
+      const next = [...prev];
+      const [moved] = next.splice(fromIndex, 1);
+      next.splice(toIndex, 0, moved);
+      return next;
     });
   }, []);
 
   const updatePageRange = useCallback((id: string, pageRange: string) => {
-    setItems((prev) => prev.map((it) => (it.id === id ? { ...it, pageRange } : it)));
+    setItems((prev) => prev.map((item) => (item.id === id ? { ...item, pageRange } : item)));
   }, []);
 
-  const rotateItem = useCallback((id: string) => {
+  const rotateItem = useCallback((id: string, delta: number = 90) => {
     setItems((prev) =>
-      prev.map((it) =>
-        it.id === id ? { ...it, rotationOffset: ((it.rotationOffset || 0) + 90) % 360 } : it
-      )
+      prev.map((item) => {
+        if (item.id !== id) return item;
+        const current = item.rotationOffset || 0;
+        const nextRot = (current + delta + 360) % 360;
+        return { ...item, rotationOffset: nextRot };
+      })
     );
   }, []);
 
   const updateJoinPosition = useCallback(
     (id: string, joinPosition: JoinPosition, targetDocumentId?: string, insertAfterPage?: number) => {
       setItems((prev) =>
-        prev.map((it) =>
-          it.id === id
-            ? {
-                ...it,
-                joinPosition,
-                targetDocumentId: targetDocumentId ?? it.targetDocumentId,
-                insertAfterPage: insertAfterPage !== undefined ? insertAfterPage : (it.insertAfterPage ?? 1),
-              }
-            : it
+        prev.map((item) =>
+          item.id === id ? { ...item, joinPosition, targetDocumentId, insertAfterPage } : item
         )
       );
     },
     []
   );
 
-  const setOutputFilename = useCallback((outputFilename: string) => {
-    setOptions((prev) => ({ ...prev, outputFilename }));
+  const setOutputFilename = useCallback((name: string) => {
+    const filename = name.trim().toLowerCase().endsWith('.pdf') ? name.trim() : `${name.trim()}.pdf`;
+    setOptions((prev) => ({ ...prev, outputFilename: filename }));
   }, []);
 
   const totalEstimatedPages = useMemo(() => {
@@ -141,12 +143,7 @@ export function usePdfMerge() {
 
     try {
       const output = await mergePdfs(items, options, (current, total, message) => {
-        setProgress({
-          status: current === 100 ? 'completed' : 'processing',
-          current,
-          total,
-          message,
-        });
+        setProgress({ status: current === 100 ? 'completed' : 'processing', current, total, message });
       });
       setResult(output);
       return output;
@@ -160,7 +157,11 @@ export function usePdfMerge() {
   const downloadResult = useCallback(() => {
     if (!result) return;
     saveAs(result.blob, result.filename);
-  }, [result]);
+    if (settings.merge.autoClear) {
+      setItems([]);
+      setResult(null);
+    }
+  }, [result, settings.merge.autoClear]);
 
   const resetMerge = useCallback(() => {
     setResult(null);

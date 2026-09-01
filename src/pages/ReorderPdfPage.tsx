@@ -8,9 +8,11 @@ import { Dropzone } from '../components/common/Dropzone';
 import { Button } from '../components/common/Button';
 import saveAs from 'file-saver';
 import { RotateCcw, ArrowUpDown, Loader2, AlertCircle } from 'lucide-react';
+import { useSettings } from '../context/SettingsContext';
 
 export const ReorderPdfPage: React.FC = () => {
   const { sharedFile, clearSharedFile } = useSharedPdf();
+  const { settings } = useSettings();
   const {
     docInfo,
     pages,
@@ -36,6 +38,23 @@ export const ReorderPdfPage: React.FC = () => {
   const handleFilesSelected = (files: File[]) => {
     if (files.length > 0) {
       loadFile(files[0]);
+    }
+  };
+
+  const handleReverse = () => {
+    if (settings.reorder.confirmReverse && !window.confirm('Reverse all page orders?')) {
+      return;
+    }
+    reversePageOrder();
+  };
+
+  const handleMovePage = (fromIdx: number, toIdx: number) => {
+    reorderPages(fromIdx, toIdx);
+    if (settings.reorder.autoScroll) {
+      setTimeout(() => {
+        const el = document.getElementById(`page-card-${toIdx}`);
+        el?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 50);
     }
   };
 
@@ -126,7 +145,7 @@ export const ReorderPdfPage: React.FC = () => {
             pageCount={pages.length}
             isModified={isModified}
             isProcessing={isSaving}
-            onReverse={reversePageOrder}
+            onReverse={handleReverse}
             onReset={resetPageOrder}
             onSave={handleSaveReordered}
           />
@@ -145,7 +164,7 @@ export const ReorderPdfPage: React.FC = () => {
             onDeselectAll={() => {}}
             onInvertSelection={() => {}}
             onRotatePage={rotatePage}
-            onReorderPages={reorderPages}
+            onReorderPages={handleMovePage}
             onResetPageOrder={resetPageOrder}
             disabled={isSaving}
           />

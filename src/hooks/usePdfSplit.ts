@@ -4,15 +4,25 @@ import type { SplitOptions, SplitMode, ProgressState, SplitOutput } from '../typ
 import { splitPdf } from '../services/pdfSplitter';
 import { computeToggleSplitPoint, computeCustomRangesUpdate } from '../features/split/splitStateHelpers';
 
+import { useSettings } from '../context/SettingsContext';
+
 export function usePdfSplit(initialFilename: string = 'document') {
+  const { settings } = useSettings();
+  const defaultMode: SplitMode =
+    settings.split.defaultMode === 'visual'
+      ? 'extract'
+      : settings.split.defaultMode === 'all'
+      ? 'every_n'
+      : 'range';
+
   const [options, setOptions] = useState<SplitOptions>({
-    mode: 'range',
+    mode: defaultMode,
     selectedPages: [],
     splitPoints: [],
-    customRanges: '1:1',
+    customRanges: settings.split.defaultSlice || '1:1',
     parsedRanges: [{ start: 1, end: 1 }],
     everyN: 2,
-    mergeExtracted: true,
+    mergeExtracted: !settings.split.autoZip,
     filenamePrefix: initialFilename.replace(/\.pdf$/i, ''),
   });
 
