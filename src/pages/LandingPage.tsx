@@ -52,6 +52,14 @@ export const LandingPage: React.FC = () => {
           >
             Merge PDFs
           </Button>
+
+          <Button
+            size="lg"
+            variant="outline"
+            onClick={() => navigate('/utils')}
+          >
+            All Utilities (/utils)
+          </Button>
         </div>
       </section>
 

@@ -5,6 +5,7 @@ import type {
   MergeOptions,
   MergeOutput,
   ProgressState,
+  JoinPosition,
 } from '../types/pdf.types';
 import { getPdfPageCount, renderPageThumbnail } from '../services/pdfRenderer';
 import { mergePdfs, buildMergeAssembly } from '../services/pdfMerger';
@@ -26,7 +27,6 @@ export function usePdfMerge() {
     const validFiles = files.filter(
       (f) => f.type === 'application/pdf' || f.name.toLowerCase().endsWith('.pdf')
     );
-
     if (validFiles.length === 0) return;
 
     for (const file of validFiles) {
@@ -49,14 +49,13 @@ export function usePdfMerge() {
 
         setItems((prev) => [...prev, newItem]);
 
-        // Render preview of first page asynchronously
         renderPageThumbnail(masterBytes, 1, 200)
           .then((thumb) => {
             setItems((prev) =>
               prev.map((it) => (it.id === id ? { ...it, thumbnailUrl: thumb } : it))
             );
           })
-          .catch((err) => console.error('Error rendering thumbnail for file:', err));
+          .catch((err) => console.error('Error rendering thumbnail:', err));
       } catch (err) {
         console.error('Error reading PDF file for merge:', err);
       }
@@ -85,30 +84,19 @@ export function usePdfMerge() {
   }, []);
 
   const updatePageRange = useCallback((id: string, pageRange: string) => {
-    setItems((prev) =>
-      prev.map((it) => (it.id === id ? { ...it, pageRange } : it))
-    );
+    setItems((prev) => prev.map((it) => (it.id === id ? { ...it, pageRange } : it)));
   }, []);
 
   const rotateItem = useCallback((id: string) => {
     setItems((prev) =>
-      prev.map((it) => {
-        if (it.id === id) {
-          const newOffset = ((it.rotationOffset || 0) + 90) % 360;
-          return { ...it, rotationOffset: newOffset };
-        }
-        return it;
-      })
+      prev.map((it) =>
+        it.id === id ? { ...it, rotationOffset: ((it.rotationOffset || 0) + 90) % 360 } : it
+      )
     );
   }, []);
 
   const updateJoinPosition = useCallback(
-    (
-      id: string,
-      joinPosition: 'end' | 'beginning' | 'inside',
-      targetDocumentId?: string,
-      insertAfterPage?: number
-    ) => {
+    (id: string, joinPosition: JoinPosition, targetDocumentId?: string, insertAfterPage?: number) => {
       setItems((prev) =>
         prev.map((it) =>
           it.id === id
@@ -149,12 +137,7 @@ export function usePdfMerge() {
       return null;
     }
 
-    setProgress({
-      status: 'processing',
-      current: 0,
-      total: 100,
-      message: 'Starting merge engine...',
-    });
+    setProgress({ status: 'processing', current: 0, total: 100, message: 'Starting merge engine...' });
 
     try {
       const output = await mergePdfs(items, options, (current, total, message) => {
@@ -165,18 +148,11 @@ export function usePdfMerge() {
           message,
         });
       });
-
       setResult(output);
       return output;
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Merge failed';
-      setProgress({
-        status: 'error',
-        current: 0,
-        total: 100,
-        message: msg,
-        error: msg,
-      });
+      setProgress({ status: 'error', current: 0, total: 100, message: msg, error: msg });
       return null;
     }
   }, [items, options]);
@@ -188,17 +164,10 @@ export function usePdfMerge() {
 
   const resetMerge = useCallback(() => {
     setResult(null);
-    setProgress({
-      status: 'idle',
-      current: 0,
-      total: 100,
-      message: '',
-    });
+    setProgress({ status: 'idle', current: 0, total: 100, message: '' });
   }, []);
 
-  const isProcessing = useMemo(() => {
-    return progress.status === 'processing';
-  }, [progress.status]);
+  const isProcessing = useMemo(() => progress.status === 'processing', [progress.status]);
 
   return {
     items,

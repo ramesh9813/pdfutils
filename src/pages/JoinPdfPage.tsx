@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useSharedPdf } from '../context/PdfContext';
 import { usePdfMerge } from '../hooks/usePdfMerge';
 import { Dropzone } from '../components/common/Dropzone';
 import { Button } from '../components/common/Button';
@@ -11,6 +12,7 @@ import {
 } from 'lucide-react';
 
 export const JoinPdfPage: React.FC = () => {
+  const { sharedFile } = useSharedPdf();
   const {
     items,
     options,
@@ -30,6 +32,12 @@ export const JoinPdfPage: React.FC = () => {
     downloadResult,
     resetMerge,
   } = usePdfMerge();
+
+  useEffect(() => {
+    if (sharedFile && items.length === 0) {
+      addFiles([sharedFile]);
+    }
+  }, [sharedFile, items.length, addFiles]);
 
   const handleFilesSelected = (files: File[]) => {
     resetMerge();

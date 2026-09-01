@@ -1,10 +1,11 @@
 import React, { useState, useRef, useMemo } from 'react';
 import type { MergeItem, MergeOptions, JoinPosition } from '../../types/pdf.types';
 import { MergeFileItem } from './MergeFileItem';
+import { AssemblySequencePreview } from '../../features/join/AssemblySequencePreview';
 import { Card } from '../common/Card';
 import { Button } from '../common/Button';
 import { Dropzone } from '../common/Dropzone';
-import { Plus, Trash2, ArrowRight, Split } from 'lucide-react';
+import { Plus, Trash2, ArrowRight } from 'lucide-react';
 import { buildMergeSequencePlan } from '../../services/pdfMerger';
 
 export interface MergeFileListProps {
@@ -59,7 +60,7 @@ export const MergeFileList: React.FC<MergeFileListProps> = ({
     e.dataTransfer.effectAllowed = 'move';
   };
 
-  const handleDragOver = (e: React.DragEvent, _index: number) => {
+  const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
     e.dataTransfer.dropEffect = 'move';
   };
@@ -73,15 +74,13 @@ export const MergeFileList: React.FC<MergeFileListProps> = ({
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Top Header Summary */}
       <div className="flex flex-wrap items-center justify-between gap-3 rounded border border-border bg-bg-surface p-4">
         <div>
           <h3 className="text-base font-bold text-text-main">
             Merge Document Queue ({items.length})
           </h3>
           <p className="text-xs text-text-muted mt-0.5">
-            Total estimated pages:{' '}
-            <strong className="text-text-main">{totalEstimatedPages}</strong>. Drag items or use arrows to adjust sequence.
+            Total estimated pages: <strong className="text-text-main">{totalEstimatedPages}</strong>. Drag items or use arrows to adjust sequence.
           </p>
         </div>
 
@@ -99,31 +98,15 @@ export const MergeFileList: React.FC<MergeFileListProps> = ({
               }
             }}
           />
-          <Button
-            type="button"
-            variant="secondary"
-            size="sm"
-            onClick={() => fileInputRef.current?.click()}
-            disabled={isProcessing}
-            leftIcon={<Plus className="h-3.5 w-3.5" />}
-          >
+          <Button type="button" variant="secondary" size="sm" onClick={() => fileInputRef.current?.click()} disabled={isProcessing} leftIcon={<Plus className="h-3.5 w-3.5" />}>
             Add More
           </Button>
-
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={onClearItems}
-            disabled={isProcessing || items.length === 0}
-            leftIcon={<Trash2 className="h-3.5 w-3.5" />}
-          >
+          <Button type="button" variant="outline" size="sm" onClick={onClearItems} disabled={isProcessing || items.length === 0} leftIcon={<Trash2 className="h-3.5 w-3.5" />}>
             Clear All
           </Button>
         </div>
       </div>
 
-      {/* List of files */}
       <div className="flex flex-col gap-2.5">
         {items.map((item, index) => (
           <MergeFileItem
@@ -146,41 +129,8 @@ export const MergeFileList: React.FC<MergeFileListProps> = ({
         ))}
       </div>
 
-      {/* Assembly Sequence Flow Preview Card */}
-      {items.length >= 2 && mergePlan.length > 0 && (
-        <Card className="flex flex-col gap-3 p-4 bg-sky-50/50 border border-sky-200 shadow-xs animate-fadeIn">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Split className="h-4 w-4 text-primary shrink-0" />
-              <span className="text-xs font-bold text-text-main">
-                Assembly Flow Preview (Including Middle/Inside Insertions)
-              </span>
-            </div>
-            <span className="text-xs font-mono font-bold text-primary bg-sky-100 px-2 py-0.5 rounded border border-sky-300">
-              Total {totalEstimatedPages} Pages
-            </span>
-          </div>
+      <AssemblySequencePreview mergePlan={mergePlan} totalEstimatedPages={totalEstimatedPages} />
 
-          <div className="flex flex-wrap items-center gap-2 pt-1">
-            {mergePlan.map((chunk, idx) => (
-              <React.Fragment key={idx}>
-                {idx > 0 && <ArrowRight className="h-3.5 w-3.5 text-text-muted shrink-0" />}
-                <div className="flex items-center gap-1.5 bg-white border border-border rounded px-2.5 py-1.5 shadow-xs text-xs">
-                  <span className="font-semibold text-text-main max-w-[130px] truncate" title={chunk.fileName}>
-                    {chunk.fileName}
-                  </span>
-                  <span className="text-[11px] font-mono font-bold text-primary bg-primary/10 px-1.5 py-0.5 rounded">
-                    {chunk.pageRangeDisplay}
-                  </span>
-                  <span className="text-[10px] text-text-muted">({chunk.pageCount} pp)</span>
-                </div>
-              </React.Fragment>
-            ))}
-          </div>
-        </Card>
-      )}
-
-      {/* Mini Dropzone at bottom to append more easily */}
       <Dropzone
         multiple
         title="Add more files to queue"
@@ -190,7 +140,6 @@ export const MergeFileList: React.FC<MergeFileListProps> = ({
         className="py-4"
       />
 
-      {/* Options & Execution */}
       <Card className="flex flex-col gap-4">
         <div>
           <label className="text-xs font-semibold text-text-main mb-1 block" htmlFor="merged-name">

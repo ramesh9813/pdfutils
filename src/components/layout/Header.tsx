@@ -36,7 +36,7 @@ export const Header: React.FC = () => {
               Overview
             </NavLink>
             <NavLink
-              to="/hub"
+              to="/utils"
               className={({ isActive }) =>
                 `flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded transition-colors ${
                   isActive
@@ -46,7 +46,19 @@ export const Header: React.FC = () => {
               }
             >
               <LayoutGrid className="h-4 w-4" />
-              Hub
+              Utils Hub
+            </NavLink>
+            <NavLink
+              to="/reduce"
+              className={({ isActive }) =>
+                `flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded transition-colors ${
+                  isActive
+                    ? 'bg-bg-subtle text-primary border border-border'
+                    : 'text-text-sub hover:text-text-main hover:bg-bg-subtle'
+                }`
+              }
+            >
+              Reduce Size
             </NavLink>
             <NavLink
               to="/split"
@@ -59,7 +71,7 @@ export const Header: React.FC = () => {
               }
             >
               <Scissors className="h-4 w-4" />
-              Split PDF
+              Split
             </NavLink>
             <NavLink
               to="/merge"
@@ -72,7 +84,19 @@ export const Header: React.FC = () => {
               }
             >
               <Layers className="h-4 w-4" />
-              Merge PDF
+              Merge
+            </NavLink>
+            <NavLink
+              to="/reorder"
+              className={({ isActive }) =>
+                `flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded transition-colors ${
+                  isActive
+                    ? 'bg-bg-subtle text-primary border border-border'
+                    : 'text-text-sub hover:text-text-main hover:bg-bg-subtle'
+                }`
+              }
+            >
+              Reorder
             </NavLink>
           </nav>
         </div>
