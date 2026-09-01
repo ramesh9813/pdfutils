@@ -2,16 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { useSharedPdf } from '../context/PdfContext';
 import { usePdfReduce } from '../features/reduce/usePdfReduce';
 import { ReduceSliders } from '../features/reduce/ReduceSliders';
+import { ReduceCompletionCard } from '../features/reduce/ReduceCompletionCard';
 import { Dropzone } from '../components/common/Dropzone';
 import { Button } from '../components/common/Button';
-import { Card } from '../components/common/Card';
 import { ProgressBar } from '../components/common/ProgressBar';
 import {
   FileText,
   Minimize2,
-  Download,
   RotateCcw,
-  CheckCircle2,
   Loader2,
   Sparkles,
 } from 'lucide-react';
@@ -27,6 +25,8 @@ export const ReducePdfPage: React.FC = () => {
     progress,
     result,
     isProcessing,
+    hasDownloaded,
+    isSettingsAltered,
     setQualityPercent,
     setTargetMb,
     resetTargetSize,
@@ -136,39 +136,25 @@ export const ReducePdfPage: React.FC = () => {
 
           {/* Completion Card */}
           {result && (
-            <Card className="flex flex-col sm:flex-row items-center justify-between gap-3 p-4 bg-emerald-50 border border-emerald-300">
-              <div className="flex items-center gap-3">
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-white">
-                  <CheckCircle2 className="h-4 w-4" />
-                </div>
-                <div>
-                  <h4 className="text-xs sm:text-sm font-bold text-emerald-950">
-                    Reduced! ({result.percentSaved}% Saved)
-                  </h4>
-                  <p className="text-[11px] text-emerald-800">
-                    {(result.originalSize / (1024 * 1024)).toFixed(2)} MB ➔ <strong>{(result.reducedSize / (1024 * 1024)).toFixed(2)} MB</strong> ({result.pageCount} pp)
-                  </p>
-                </div>
-              </div>
-
-              <Button
-                type="button"
-                variant="primary"
-                size="sm"
-                onClick={() => downloadResult(activeFile.name)}
-                leftIcon={<Download className="h-3.5 w-3.5" />}
-                className="bg-emerald-600 hover:bg-emerald-700 border-emerald-600 w-full sm:w-auto"
-              >
-                Download ({(result.reducedSize / (1024 * 1024)).toFixed(2)} MB)
-              </Button>
-            </Card>
+            <ReduceCompletionCard
+              result={result}
+              hasDownloaded={hasDownloaded}
+              isSettingsAltered={isSettingsAltered}
+              onDownload={() => downloadResult(activeFile.name)}
+            />
           )}
 
-          {/* Action Button */}
-          {!result && (
+          {/* Action Button: Always available to alter quality and re-reduce */}
+          <div className="flex flex-col gap-2">
+            {result && isSettingsAltered && (
+              <p className="text-xs text-center text-amber-800 font-semibold bg-amber-50 py-1.5 px-3 rounded border border-amber-300 animate-fadeIn">
+                Sliders changed to {qualityPercent}% (~{targetMb.toFixed(2)} MB). Click below to apply and download new size.
+              </p>
+            )}
+
             <Button
               type="button"
-              variant="primary"
+              variant={!result || isSettingsAltered ? 'primary' : 'outline'}
               size="md"
               onClick={handleExecute}
               disabled={isProcessing || !fileBuffer}
@@ -179,13 +165,17 @@ export const ReducePdfPage: React.FC = () => {
                   <Sparkles className="h-4 w-4" />
                 )
               }
-              className="w-full py-2.5 text-xs font-semibold"
+              className="w-full py-2.5 text-xs font-semibold shadow-xs"
             >
               {isProcessing
                 ? `Reducing... (${progress.current}%)`
-                : `Reduce to ~${targetMb.toFixed(2)} MB (${qualityPercent}%)`}
+                : !result
+                ? `Reduce to ~${targetMb.toFixed(2)} MB (${qualityPercent}%)`
+                : isSettingsAltered
+                ? `Apply New Quality (~${targetMb.toFixed(2)} MB • ${qualityPercent}%)`
+                : `Reduce Again (~${targetMb.toFixed(2)} MB • ${qualityPercent}%)`}
             </Button>
-          )}
+          </div>
         </div>
       )}
     </div>

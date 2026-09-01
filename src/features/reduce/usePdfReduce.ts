@@ -19,12 +19,18 @@ export function usePdfReduce(initialFileSize: number = 0) {
   });
 
   const [result, setResult] = useState<ReduceResult | null>(null);
+  const [hasDownloaded, setHasDownloaded] = useState<boolean>(false);
+  const [lastQuality, setLastQuality] = useState<number | null>(null);
+  const [lastMb, setLastMb] = useState<number | null>(null);
 
   const resetTargetSize = useCallback((sizeBytes: number) => {
     const mb = Math.max(0.1, Math.round((sizeBytes / (1024 * 1024)) * 100) / 100);
     setTargetMb(Math.max(0.05, Math.round(mb * 0.65 * 100) / 100));
     setQualityPercent(65);
     setResult(null);
+    setHasDownloaded(false);
+    setLastQuality(null);
+    setLastMb(null);
   }, []);
 
   const executeReduce = useCallback(
@@ -53,6 +59,9 @@ export function usePdfReduce(initialFileSize: number = 0) {
         });
 
         setResult(out);
+        setLastQuality(qualityPercent);
+        setLastMb(targetMb);
+        setHasDownloaded(false);
         return out;
       } catch (err: unknown) {
         const msg = err instanceof Error ? err.message : 'PDF reduction failed';
@@ -75,9 +84,15 @@ export function usePdfReduce(initialFileSize: number = 0) {
       const base = originalFilename.replace(/\.pdf$/i, '');
       const downloadName = `${base}_reduced.pdf`;
       saveAs(result.blob, downloadName);
+      setHasDownloaded(true);
     },
     [result]
   );
+
+  const isSettingsAltered = useMemo(() => {
+    if (!result || lastQuality === null || lastMb === null) return false;
+    return qualityPercent !== lastQuality || Math.abs(targetMb - lastMb) > 0.01;
+  }, [result, qualityPercent, targetMb, lastQuality, lastMb]);
 
   const isProcessing = useMemo(() => {
     return progress.status === 'processing';
@@ -89,6 +104,8 @@ export function usePdfReduce(initialFileSize: number = 0) {
     progress,
     result,
     isProcessing,
+    hasDownloaded,
+    isSettingsAltered,
     setQualityPercent,
     setTargetMb,
     resetTargetSize,
